@@ -1,0 +1,676 @@
+# Copyright (C) 2024 Pee Aye Creative
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Divi Taxonomy Helper 1.6\n"
+"Report-Msgid-Bugs-To: "
+"https://wordpress.org/support/plugin/divi-taxonomy-helper\n"
+"POT-Creation-Date: 2024-03-19 19:35:31+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n1.0.2\n"
+
+#: includes/classes/class-divi-blog-module.php:42
+msgid "Only Show Posts In Current Category Level"
+msgstr ""
+
+#: includes/classes/class-divi-blog-module.php:49
+msgid ""
+"Choose to limit the posts that are shown to only the current category level "
+"instead of showing all posts from other levels when using multiple levels "
+"of parent and child category hierarchy."
+msgstr ""
+
+#: includes/classes/class-divi-shop-module.php:42
+msgid "Only Show Products In Current Category Level"
+msgstr ""
+
+#: includes/classes/class-divi-shop-module.php:49
+msgid ""
+"Choose to limit the products that are shown to only the current category "
+"level instead of showing all products from other levels when using multiple "
+"levels of parent and child category hierarchy."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Divi Taxonomy Helper"
+msgstr ""
+
+#: includes/classes/class-divi-theme-options.php:59
+msgid "Taxonomy Term Images"
+msgstr ""
+
+#: includes/classes/class-divi-theme-options.php:75
+msgid "Enable this setting to add image support to the taxonomy terms."
+msgstr ""
+
+#: includes/classes/class-divi-theme-options.php:78
+msgid "Default %s Featured Image"
+msgstr ""
+
+#: includes/classes/class-divi-theme-options.php:81
+msgid "Set As Default Image"
+msgstr ""
+
+#: includes/classes/class-plugin-scripts.php:45
+msgid "Select or upload an image for this term"
+msgstr ""
+
+#: includes/classes/class-plugin-scripts.php:46
+msgid "Attach"
+msgstr ""
+
+#: includes/classes/class-plugin-setup.php:86
+#. translators: 1: URL to page, 2: Link Title.
+msgid "Documentation & Support"
+msgstr ""
+
+#: includes/classes/class-plugin-setup.php:107
+#. translators: 1: URL to page, 2: Link Title.
+msgid "Settings"
+msgstr ""
+
+#: includes/classes/class-term-image.php:49
+msgid "Thumbnail"
+msgstr ""
+
+#: includes/classes/class-term-image.php:50
+msgid "Select which image should represent this term."
+msgstr ""
+
+#: includes/classes/class-term-image.php:51
+msgid "Upload/Add image"
+msgstr ""
+
+#: includes/classes/class-term-image.php:52
+msgid "Remove"
+msgstr ""
+
+#: includes/classes/class-term-image.php:53
+msgid "Featured Image"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:25
+msgid "Content"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:26
+msgid "Layout"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:27
+msgid "Elements"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:28
+msgid "Links"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:33
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:55
+msgid "Taxonomies"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:34
+msgid "Images"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:36
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:40
+msgid "Icons"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:43
+msgid "Design"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:47
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:73
+msgid "Title Text"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:48
+msgid "Count Text"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:49
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:79
+msgid "Description Text"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:61
+msgid "Image"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:67
+msgid "Icon"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:85
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:191
+msgid "Button"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:105
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:437
+msgid "Title"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:120
+msgid "Count"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:136
+msgid "Description"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:231
+msgid "Post Type"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:232
+msgid "Choose which post type taxonomies you want to display."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:242
+msgid "Taxonomy Terms Count"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:244
+msgid "Set how many taxonomies to display at once time."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:250
+msgid "Term Offset Number"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:252
+msgid ""
+"Choose how many terms you would like to skip. These terms will not be shown "
+"in the feed."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:258
+msgid "Show Images"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:260
+msgid "Choose to show or hide the taxonomy image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:270
+msgid "Use Icons"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:272
+msgid "Choose to show icons for each taxonomy term instead of images."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:283
+msgid "Show Title"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:285
+msgid "Choose to show or hide the taxonomy title."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:295
+msgid "Show Post Count"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:297
+msgid "Choose to show the number of posts within the taxonomy."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:307
+msgid "Show Description"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:309
+msgid "Choose to show or hide the taxonomy description."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:319
+msgid "Show Button"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:321
+msgid "Choose to show or hide the view taxonomy button."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:331
+msgid "Layout Type"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:333
+msgid "Choose the type of layout to use for displaying the taxonomy terms."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:335
+msgid "Columns"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:336
+msgid "Inline"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:344
+msgid "Show Pagination"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:346
+msgid "Turn pagination on and off."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:357
+msgid "Number Of Columns"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:358
+msgid "Set the number of taxonomy grid columns for each device."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:379
+msgid "Spacing Between"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:380
+msgid "Adjust the spacing between the taxonomy items."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:399
+msgid "Image & Icon Position"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:401
+msgid "Show the image top, left or right."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:413
+msgid "Equalize Taxonomy Height"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:414
+msgid "Choose to make the height of each taxonomy item the same."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:426
+msgid "Description Length"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:429
+msgid "Define the character count length of the taxonomy description text."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:434
+msgid "Order By"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:438
+msgid "Post Count"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:439
+msgid "Random"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:442
+msgid "Choose the order for displaying taxonomies in the grid."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:447
+msgid "Order"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:450
+msgid "Ascending"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:451
+msgid "Descending"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:454
+msgid "Choose to display the taxonomies in ascending or descending order."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:460
+msgid "Button Text"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:462
+msgid "Enter custom text for the button."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:468
+msgid "Hide Taxonomy Term If No Associated Posts"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:469
+msgid ""
+"Choose to hide any taxonomy term that does not have any posts assigned to "
+"it."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:481
+msgid "Only Show Current Level Taxonomies"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:482
+msgid ""
+"Choose to limit the taxonomies that shown to only the current level instead "
+"of showing all taxonomies from lower levels when using multiple levels of "
+"taxonomy hierarchy."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:493
+msgid "If No Taxonomies"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:494
+msgid "Choose an action if there are no taxonomies to show in the module."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:497
+msgid "Hide Module"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:498
+msgid "Display Message"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:505
+msgid "Custom Message If No Taxonomies"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:507
+msgid ""
+"Write a custom message to show if there are no taxonomies to show in the "
+"module."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:514
+msgid "Button Fullwidth"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:516
+msgid "Choose to make the button fullwidth."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:529
+msgid "Taxonomy Margin"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:530
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:616
+msgid "Adjust the spacing around the outside of the taxonomy item image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:539
+msgid "Taxonomy Padding"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:540
+msgid "Adjust the spacing around the content area in the taxonomy grid items."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:550
+msgid "Image Aspect Ratio"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:552
+msgid "Set the aspect ratio of the taxonomy term image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:554
+msgid "Default"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:555
+msgid "Square 1:1"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:556
+msgid "Landscape 16:9"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:557
+msgid "Landscape 4:3"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:558
+msgid "Landscape 3:2"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:559
+msgid "Portrait 9:16"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:560
+msgid "Portrait 3:4"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:561
+msgid "Portrait 2:3"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:569
+msgid "Image Width"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:570
+msgid "Set a custom width for the taxonomy grid image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:586
+msgid "Image Height"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:587
+msgid "Set a custom height for the taxonomy grid image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:605
+msgid "Image Fit"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:607
+msgid "Choose how the image should fit within its container."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:615
+msgid "Image Margin"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:625
+msgid "Image Padding"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:626
+msgid "Adjust the spacing around the inside of the taxonomy item image."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:635
+msgid "Image Alignment"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:637
+msgid "Align the image to the left, right or center."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:645
+msgid "Icon Size"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:647
+msgid "Choose a custom size for the taxonomy icons."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:664
+msgid "Icon Color"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:666
+msgid "Choose a custom color for the taxonomy icons."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:673
+msgid "Icon Background Color"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:675
+msgid "Choose a custom background color for the taxonomy icons."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:682
+msgid "Icon Margin"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:683
+msgid "Adjust the spacing around the outside of the taxonomy item icon."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:693
+msgid "Icon Padding"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:694
+msgid "Adjust the spacing around the inside of the taxonomy item icon."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:704
+msgid "Icon Alignment"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:706
+msgid "Align the icon to the left, right or center."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:715
+msgid "Make Entire Term Clickable"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:717
+msgid "Choose to make the entire term area clickable."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:829
+msgid "Your Dynamic Taxonomies will display here."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:965
+msgid "%s %s"
+msgid_plural "%s %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1432
+msgid "Background Color"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1433
+msgid "Set a background color for the taxonomy grid items."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1442
+msgid "Default Icon"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1443
+msgid "Set a default icon that applies to all taxonomy terms."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1454
+msgid "Taxonomy Type"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1455
+msgid "Choose the type of taxonomies you want to display."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1466
+msgid "Dynamic Taxonomies"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1467
+msgid ""
+"Choose to enable dynamic content which allows you to place the module in a "
+"Divi Theme Builder layout to dynamically display taxonomies based on the "
+"template assignment."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1480
+msgid "Include Or Exclude Taxonomy Terms"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1481
+msgid "Choose whether selected taxonomy terms should be included or excluded."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1484
+msgid "Include"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1485
+msgid "Exclude"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1499
+msgid "Included Taxonomy Terms"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1500
+msgid "Choose which taxonomies you would like to include in the feed."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1514
+msgid "Excluded Taxonomy Terms"
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1515
+msgid "Choose which taxonomy terms you would like to exclude from the feed."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1532
+msgid "Set a background color for the taxonomy grid item."
+msgstr ""
+
+#: includes/modules/TaxonomyHelper/TaxonomyHelper.php:1548
+msgid "Choose icon to display with the taxonomy term."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://www.elegantthemes.com/marketplace/divi-taxonomy-helper/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Add images to taxonomy terms like categories and tags, enable taxonomy "
+"featured image support in the Divi Theme Builder templates, display "
+"taxonomies in a fully customizable grid similar to the blog module, and "
+"show posts and products by current hierarchy level in the Blog and Woo "
+"products modules."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Pee Aye Creative"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://www.peeayecreative.com/"
+msgstr ""

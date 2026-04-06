@@ -1,0 +1,60 @@
+== Changelog ==
+
+= 1.1.2 =
+Release date: 5th April 2024
+* FIXED: Layout 3 was not displaying properly on few browsers.
+
+= 1.1.1 =
+Release date: 1st April 2024
+* FIXED: Uncaught Error: Call to undefined function wc_get_product_visibility_term_ids
+
+= 1.1.0 =
+Release date: 07th March 2024
+* ADDED: Two new layouts.
+* ADDED: Link to search result page to show all results.
+* ADDED: Control for pagination.
+* ADDED: Control to limit the excerpt length.
+* ADDED: Close icon in the search field.
+* IMPROVEMENT: Control for padding, border and background color for search result item.
+
+= 1.0.6 =
+Release date: 13th February 2024
+* IMPROVEMENT: Plugin was failing to install on latest WordPress v6.4.3.
+
+= 1.0.5 =
+Release date: 12th October 2023
+* ADDED: Control to exclude post types in search results.
+* ADDED: Control to exclude post ids in search results.
+* ADDED: Control to exclude taxonomies in search results.
+* IMPROVEMENT: Only current language results will appear when WPML is active.
+
+= 1.0.4 =
+Release date: 26th April 2022
+* IMPROVEMENT: Compatible with the new Background gradient.
+
+= 1.0.3 =
+Release date: 9th December 2021
+* ADDED: Options to search in taxonomies, product attributes and SKU.
+* ADDED: Responsive control for Number of Columns.
+* ADDED: Column spacing control.
+* ADDED: Image width and height control.
+* FIXED: 'NOTICE' Required parameter $render_slug follows optional parameter $content.
+
+= 1.0.2 =
+Release date: 13th April 2021
+* FIXED: Search is not working with WC active.
+* IMPROVEMENT: Improved update mechanism.
+
+= 1.0.1 =
+Release date: 22nd September 2020
+* ADDED: Orderby & Order control.
+* ADDED: Control for Border & Box Shadow on search result box.
+* ADDED: Option to display product price.
+* ADDED: Column control for result items.
+* ADDED: Control to display the results in masonry.
+* ADDED: Control to hide scrollbar of result box.
+* FIXED: WooCommerce products which were excluded from search were coming in the results.
+
+= 1.0.0 =
+Release date: 28th August 2020
+* Initial release.

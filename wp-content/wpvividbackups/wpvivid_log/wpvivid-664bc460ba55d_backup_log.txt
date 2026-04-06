@@ -1,0 +1,117 @@
+Log created: 2024-05-20 21:45:04
+Type: backup
+[2024-05-20 21:45:05][notice]Start backing up.
+[2024-05-20 21:45:05][notice]server info fcgi:Off max execution time: 300 wp version:6.5.3 php version:7.4.33 db version:5.5.5 php ini:safe_mode: memory_limit:256M memory_get_usage:10.37 MB memory_get_peak_usage:11.37 MB extensions:PDO enabled curl enabled zlib enabled   is_multisite:0
+[2024-05-20 21:45:05][notice]Prepare to backup backup_db files.
+[2024-05-20 21:45:05][notice]Start exporting database.
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ultimate_csv_importer_mappingtemplate
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_wpfm_backup
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ultimate_csv_importer_media
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_smackuci_events
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_smackcsv_file_events
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ultimate_csv_importer_shortcode_manager
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ultimate_post_entries
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_import_postID
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_import_log_detail
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ultimate_csv_importer_acf_fields
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_import_detail_log
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_wpforms_tasks_meta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_cli_csv_template
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_glsr_assigned_users
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_glsr_assigned_terms
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_glsr_assigned_posts
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_links
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_yoast_migrations
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_ce4wp_contacts
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_actionscheduler_claims
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_actionscheduler_groups
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_term_relationships
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_usermeta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_yoast_primary_term
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_yoast_seo_links
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_glsr_ratings
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_actionscheduler_logs
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_commentmeta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_termmeta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_yoast_indexable_hierarchy
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_um_metadata
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_users
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_wpforms_payment_meta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_comments
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_yoast_indexable
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_actionscheduler_actions
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_wpforms_payments
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_term_taxonomy
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_terms
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_options
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_postmeta
+[2024-05-20 21:45:05][notice]Preparing to dump table wpux_posts
+[2024-05-20 21:45:05][notice]Exporting database finished.
+[2024-05-20 21:45:05][notice]Start compressing database
+[2024-05-20 21:45:05][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_db.sql
+[2024-05-20 21:45:05][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_db.part001.zip, filesize: 576.40 KB
+[2024-05-20 21:45:05][notice]Compressing database completed
+[2024-05-20 21:45:05][notice]Backing up backup_db completed.
+[2024-05-20 21:45:05][notice]Prepare to backup backup_themes files.
+[2024-05-20 21:45:05][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip index:500
+[2024-05-20 21:45:07][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip success. index:500 file size:4.89 MB
+[2024-05-20 21:45:07][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip index:1000
+[2024-05-20 21:45:07][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip success. index:1000 file size:6.66 MB
+[2024-05-20 21:45:07][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip index:1500
+[2024-05-20 21:45:11][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip success. index:1500 file size:15.59 MB
+[2024-05-20 21:45:11][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip index:2000
+[2024-05-20 21:45:11][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.part001.zip success. index:2000 file size:16.05 MB
+[2024-05-20 21:45:11][notice]Backing up backup_themes completed.
+[2024-05-20 21:45:11][notice]Prepare to backup backup_plugin files.
+[2024-05-20 21:45:11][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:500
+[2024-05-20 21:45:12][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:500 file size:1.32 MB
+[2024-05-20 21:45:12][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:1000
+[2024-05-20 21:45:12][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:1000 file size:2.06 MB
+[2024-05-20 21:45:12][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:1500
+[2024-05-20 21:45:13][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:1500 file size:4.30 MB
+[2024-05-20 21:45:13][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:2000
+[2024-05-20 21:45:15][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:2000 file size:9.80 MB
+[2024-05-20 21:45:15][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:2500
+[2024-05-20 21:45:17][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:2500 file size:16.93 MB
+[2024-05-20 21:45:17][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip index:3000
+[2024-05-20 21:45:17][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.part001.zip success. index:3000 file size:17.47 MB
+[2024-05-20 21:45:17][notice]Backing up backup_plugin completed.
+[2024-05-20 21:45:17][notice]Prepare to backup backup_uploads files.
+[2024-05-20 21:45:17][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_uploads.part001.zip index:500
+[2024-05-20 21:45:18][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_uploads.part001.zip success. index:500 file size:17.43 MB
+[2024-05-20 21:45:18][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_uploads.part001.zip index:1000
+[2024-05-20 21:45:19][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_uploads.part001.zip success. index:1000 file size:30.95 MB
+[2024-05-20 21:45:19][notice]Backing up backup_uploads completed.
+[2024-05-20 21:45:19][notice]Prepare to backup backup_content files.
+[2024-05-20 21:45:19][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_content.part001.zip index:500
+[2024-05-20 21:45:20][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_content.part001.zip success. index:500 file size:3.16 MB
+[2024-05-20 21:45:20][notice]Backing up backup_content completed.
+[2024-05-20 21:45:20][notice]Prepare to backup backup_core files.
+[2024-05-20 21:45:20][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:500
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:500 file size:1.50 MB
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:1000
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:1000 file size:2.00 MB
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:1500
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:1500 file size:4.02 MB
+[2024-05-20 21:45:21][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:2000
+[2024-05-20 21:45:24][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:2000 file size:11.05 MB
+[2024-05-20 21:45:24][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:2500
+[2024-05-20 21:45:25][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:2500 file size:13.14 MB
+[2024-05-20 21:45:25][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip index:3000
+[2024-05-20 21:45:25][notice]Compressing zip file:localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.part001.zip success. index:3000 file size:13.86 MB
+[2024-05-20 21:45:25][notice]Backing up backup_core completed.
+[2024-05-20 21:45:25][notice]Prepare to backup backup_merge files.
+[2024-05-20 21:45:25][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_db.zip
+[2024-05-20 21:45:25][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 570.79 KB
+[2024-05-20 21:45:25][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_themes.zip
+[2024-05-20 21:45:26][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 16.34 MB
+[2024-05-20 21:45:26][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_plugin.zip
+[2024-05-20 21:45:26][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 33.25 MB
+[2024-05-20 21:45:27][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_uploads.zip
+[2024-05-20 21:45:28][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 64.15 MB
+[2024-05-20 21:45:28][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_content.zip
+[2024-05-20 21:45:28][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 67.30 MB
+[2024-05-20 21:45:28][notice]Prepare to zip file. file: localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_core.zip
+[2024-05-20 21:45:29][notice]Adding zip files completed.localdirectoryfortune.com_demo_home-services_wpvivid-664bc460ba55d_2024-05-20-21-45_backup_all.part001.zip, filesize: 80.79 MB
+[2024-05-20 21:45:30][notice]Backing up backup_merge completed.
+[2024-05-20 21:45:30][notice]Backup completed.

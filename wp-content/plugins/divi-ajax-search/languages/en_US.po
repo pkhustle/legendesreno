@@ -1,0 +1,645 @@
+# Copyright (C) 2024 Elicus
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Divi Ajax Search 1.1.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/divi-ajax-search\n"
+"POT-Creation-Date: 2024-04-05 06:38:22+00:00\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
+"_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n1.0.2\n"
+
+#. Plugin Name of the plugin/theme
+msgid "Divi Ajax Search"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:42
+msgid "Configuration"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:45
+msgid "Search Area"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:48
+msgid "Display"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:51
+#: includes/modules/AjaxSearch/AjaxSearch.php:100
+msgid "Pagination"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:54
+#: includes/modules/AjaxSearch/AjaxSearch.php:941
+msgid "Scrollbar"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:57
+msgid "Link"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:64
+msgid "Search Field"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:67
+msgid "Search Icon"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:70
+msgid "Clear Icon"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:73
+msgid "Loader"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:76
+#: includes/modules/AjaxSearch/AjaxSearch.php:501
+msgid "Search Result Item"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:79
+msgid "Search Result Item Text"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:82
+#: includes/modules/AjaxSearch/AjaxSearch.php:114
+#: includes/modules/AjaxSearch/AjaxSearch.php:605
+#: includes/modules/AjaxSearch/AjaxSearch.php:614
+#: includes/modules/AjaxSearch/AjaxSearch.php:648
+msgid "Title"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:85
+#: includes/modules/AjaxSearch/AjaxSearch.php:150
+#: includes/modules/AjaxSearch/AjaxSearch.php:607
+#: includes/modules/AjaxSearch/AjaxSearch.php:615
+msgid "Excerpt"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:88
+#: includes/modules/AjaxSearch/AjaxSearch.php:186
+msgid "Price"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:91
+#: includes/modules/AjaxSearch/AjaxSearch.php:222
+msgid "No Result"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:97
+#: includes/modules/AjaxSearch/AjaxSearch.php:616
+msgid "Featured Image"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:103
+#: includes/modules/AjaxSearch/AjaxSearch.php:258
+#: includes/modules/AjaxSearch/AjaxSearch.php:524
+msgid "See All Results Link"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:286
+msgid "Pagination Link"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:326
+#: includes/modules/AjaxSearch/AjaxSearch.php:394
+msgid "Field"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:438
+msgid "Featured Image Width"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:475
+msgid "Featured Image Height"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:513
+msgid "Result Box"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:545
+msgid "Search Result Item - Box Shadow"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:553
+msgid "Result Box - Box Shadow"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:601
+msgid "All of the above"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:606
+msgid "Content"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:608
+msgid "Taxonomies"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:609
+msgid "Product Attributes"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:610
+msgid "Product SKU"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:617
+msgid "Product Price"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:623
+msgid "Search Field Placeholder"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:626
+#: includes/modules/AjaxSearch/AjaxSearch.php:627
+#: includes/modules/AjaxSearch/AjaxSearch.php:1251
+msgid "Search"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:630
+#: includes/modules/AjaxSearch/AjaxSearch.php:828
+msgid "Here you can input the placeholder to be used for the search field."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:633
+msgid "Search Result Number"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:639
+msgid ""
+"Here you can input the number of items to be displayed in the search result. "
+"Input -1 for all."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:642
+msgid "Order by"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:646
+msgid "Date"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:647
+msgid "Modified Date"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:649
+msgid "Slug"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:650
+msgid "ID"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:651
+msgid "Random"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:656
+msgid "Here you can choose the order type of your results."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:659
+msgid "Order"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:663
+msgid "DESC"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:664
+msgid "ASC"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:672
+msgid "Here you can choose the order of your results."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:675
+msgid "No Result Text"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:678
+msgid "No results found"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:681
+msgid ""
+"Here you can input the custom text to be displayed when no results found."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:684
+msgid "Search in"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:691
+msgid "Here you can choose where you would like to search in."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:694
+msgid "Post Types"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:701
+msgid "Here you can choose which post types you would like to search in."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:704
+msgid "Exclude Post Types"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:709
+msgid ""
+"Here you can enter post types slug you want to exclude from search separated "
+"by commas."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:712
+msgid "Include Taxonomies"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:717
+msgid ""
+"Here you can enter taxonomies slug you want to include in search separated "
+"by commas."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:720
+msgid "Exclude Taxonomies"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:725
+msgid ""
+"Here you can enter taxonomies slug you want to exclude from search separated "
+"by commas."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:728
+msgid "Exclude Post IDs"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:733
+msgid ""
+"Here you can enter post ids you want to exclude from search separated by "
+"commas."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:737
+msgid "Layout"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:741
+msgid "Layout 1"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:742
+msgid "Layout 2"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:743
+msgid "Layout 3"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:749
+msgid "Here you can select the layout to display the search result."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:752
+msgid "Show Search Icon"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:756
+#: includes/modules/AjaxSearch/AjaxSearch.php:769
+#: includes/modules/AjaxSearch/AjaxSearch.php:809
+#: includes/modules/AjaxSearch/AjaxSearch.php:875
+#: includes/modules/AjaxSearch/AjaxSearch.php:890
+#: includes/modules/AjaxSearch/AjaxSearch.php:903
+msgid "Yes"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:757
+#: includes/modules/AjaxSearch/AjaxSearch.php:770
+#: includes/modules/AjaxSearch/AjaxSearch.php:810
+#: includes/modules/AjaxSearch/AjaxSearch.php:876
+#: includes/modules/AjaxSearch/AjaxSearch.php:889
+#: includes/modules/AjaxSearch/AjaxSearch.php:902
+msgid "No"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:762
+msgid "This will turn the search icon on and off."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:765
+msgid "Show Clear Icon"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:775
+msgid ""
+"This will turn the clear/close icon on and off, when text field has text or "
+"not."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:778
+msgid "Display Fields"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:785
+msgid ""
+"Here you can choose which fields you would like to display in search results."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:788
+msgid "Excerpt Length"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:802
+msgid ""
+"The length of the post excerpt/content to display, select to the zero if you "
+"want to remove the limit."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:805
+msgid "Enable See All Result Link"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:815
+msgid "Enable this to display the search result page link."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:818
+msgid "See All Result Link Text"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:821
+#: includes/modules/AjaxSearch/AjaxSearch.php:822
+#: includes/modules/AjaxSearch/AjaxSearch.php:1284
+msgid "See all results"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:831
+msgid "Number Of Columns"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:850
+msgid "Here you can select the number of columns to display result items."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:853
+msgid "Column Spacing"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:868
+msgid "Increase or decrease spacing between columns."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:871
+msgid "Use Masonry"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:881
+msgid ""
+"Here you can select whether or not to display the results in masonry design "
+"appearance."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:885
+msgid "Show Pagination"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:895
+msgid "Show Pagination or not."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:898
+msgid "Show Previous Next Links"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:911
+msgid "Show Previous Next Links or not."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:914
+msgid "Next Link Text"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:917
+msgid "Next"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:924
+msgid "Here you can define Next Link text in numbered pagination."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:927
+msgid "Prev Link Text"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:930
+msgid "Prev"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:937
+msgid "Here you can define Previous Link text in numbered pagination."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:945
+msgid "Show"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:946
+msgid "Hide"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:951
+msgid ""
+"Here you can select whether to show or hide scrollbar. This is totally "
+"depends on the browser, we can not guarantee the result of it."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:954
+msgid "Result Item Link Target"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:958
+msgid "In The Same Window"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:959
+msgid "In The New Tab"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:964
+msgid ""
+"Here you can choose whether or not the search result item opens the link in "
+"a new window."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:968
+msgid "Item Content Background"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:975
+#: includes/modules/AjaxSearch/AjaxSearch.php:1057
+#: includes/modules/AjaxSearch/AjaxSearch.php:1090
+#: includes/modules/AjaxSearch/AjaxSearch.php:1129
+msgid "Here you can define a custom color to be used for the search icon."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:978
+msgid "Item Content Padding"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:986
+#: includes/modules/AjaxSearch/AjaxSearch.php:996
+msgid ""
+"Padding adds extra space to the inside of the element, increasing the "
+"distance between the edge of the element and its inner contents."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:989
+msgid "Search Result Box Padding"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:999
+msgid "Search Result Box Background"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1010
+msgid ""
+"Customize the background style of the search result box by adjusting the "
+"background color, gradient, and image."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1013
+msgid "Search Result Item Background"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1024
+msgid ""
+"Customize the background style of the search result item by adjusting the "
+"background color, gradient, and image."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1027
+msgid "Search Icon Font Size"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1044
+#: includes/modules/AjaxSearch/AjaxSearch.php:1077
+msgid "Increase or decrease the icon size."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1047
+msgid "Search Icon Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1060
+msgid "Clear Icon Font Size"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1080
+msgid "Clear Icon Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1093
+msgid "Loader Size"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1107
+msgid "Increase or decrease the loader size."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1110
+msgid "Loader Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1117
+msgid "Here you can define a custom color to be used for the loader."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1120
+msgid "Background Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1133
+msgid "Pagination Container Background Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1143
+msgid ""
+"Here you can define a custom background color for the pagination container."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1146
+msgid "Pagination Link Background Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1156
+msgid "Here you can define a custom background color for the pagination link."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1159
+msgid "Pagination Link Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1169
+msgid "Here you can define a custom color for the pagination link."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1172
+msgid "Active Pagination Link Background Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1182
+msgid ""
+"Here you can define a custom background color for the active pagination link."
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1185
+msgid "Active Pagination Link Color"
+msgstr ""
+
+#: includes/modules/AjaxSearch/AjaxSearch.php:1195
+msgid "Here you can define a custom color for the active pagination link."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://diviextended.com/product/divi-ajax-search/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"An advanced Ajax Live Search plugin to let you display faster & better "
+"search results in your Divi theme website."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Elicus"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://elicus.com/"
+msgstr ""
