@@ -74,7 +74,7 @@ define('GOOGLE_PLACES_API_KEY', 'your-google-api-key-here');
 | **Featured Image** | Google Places Photos | Only if none exists |
 | **Photo Gallery** | Google Places Photos (up to 5) | Only if gallery is empty |
 | **Review Ratings** | Site Reviews plugin | Averages calculated from custom fields |
-| **Description** | Hostinger AI | Only if post content is empty or < 50 chars |
+| **Description** | Gemini API | Only if post content is empty or < 50 chars |
 
 ---
 
@@ -129,9 +129,9 @@ The plugin expects these custom rating criteria in Site Reviews:
 - Try editing the address to be more complete
 - Manually add a `place_id` ACF field if you have it
 
-### "Hostinger AI not available" error
-- The Hostinger AI Assistant plugin is not active
-- Activate it via `Plugins` → `Hostinger AI`
+### "Gemini API Key not available" error
+- Check that `GEMINI_API_KEY` is defined in `wp-config.php`
+- Make sure there are no typos or extra spaces
 
 ### "No reviews found" error
 - No Site Reviews exist for this professional
@@ -144,7 +144,7 @@ The plugin expects these custom rating criteria in Site Reviews:
 
 ### Description not generating
 - Post already has content (>50 characters)
-- Check Hostinger AI plugin is configured correctly
+- Check Gemini API Key is configured correctly
 - Try enriching again - AI APIs can occasionally timeout
 
 ---
@@ -162,9 +162,9 @@ The plugin expects these custom rating criteria in Site Reviews:
 - Photos: 5 requests = $0.035
 - **Total: ~$0.084 per professional**
 
-**Hostinger AI:**
-- Included with Hostinger hosting
-- No additional costs
+**Gemini API:**
+- Free tier available for gemini-1.5-flash
+- Generous request limits for standard use
 
 ---
 
@@ -177,7 +177,7 @@ The plugin expects these custom rating criteria in Site Reviews:
 2. Place Details (place_id) → city, photos[], reviews[]
 3. Download Photos → WP Media Library
 4. Extract Site Reviews → Calculate averages
-5. Generate Description (Hostinger AI) → post_content
+5. Generate Description (Gemini API) → post_content
 ```
 
 ### Data Storage
@@ -233,7 +233,7 @@ For issues or questions:
 - Initial release
 - Google Places integration
 - Site Reviews rating extraction
-- Hostinger AI description generation
+- Gemini API description generation
 - Bulk action support
 - Meta box UI
 - Row action shortcuts

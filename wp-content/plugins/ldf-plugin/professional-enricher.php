@@ -31,11 +31,12 @@ class LDF_Professional_Enricher {
     const REVIEW_PROFESSIONALISM = 'professionalism';
     const REVIEW_VALUE = 'value_for_money';
     
-    private $hostinger_client;
+    private $gemini_api_key;
     private $google_api_key;
     
     public function __construct() {
         $this->google_api_key = defined('GOOGLE_PLACES_API_KEY') ? GOOGLE_PLACES_API_KEY : '';
+        $this->gemini_api_key = defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '';
         
         // Admin hooks
         add_action('admin_footer-edit.php', array($this, 'add_bulk_action_js'));
@@ -49,20 +50,6 @@ class LDF_Professional_Enricher {
         
         // Meta box
         add_action('add_meta_boxes', array($this, 'add_meta_box'));
-        
-        // Initialize Hostinger client if available
-        if (class_exists('Hostinger_Ai_Assistant_Requests_Client') && class_exists('Hostinger_Ai_Assistant_Config')) {
-            $config = new Hostinger_Ai_Assistant_Config();
-            $helper = new Hostinger_Ai_Assistant_Helper();
-            
-            $this->hostinger_client = new Hostinger_Ai_Assistant_Requests_Client(
-                $config->get_config_value('base_rest_uri', HOSTINGER_AI_ASSISTANT_REST_URI),
-                array(
-                    Hostinger_Ai_Assistant_Config::TOKEN_HEADER => $helper::get_api_token(),
-                    Hostinger_Ai_Assistant_Config::DOMAIN_HEADER => $helper->get_host_info(),
-                )
-            );
-        }
     }
     
     /**
@@ -442,7 +429,8 @@ class LDF_Professional_Enricher {
         }
         
         if (isset($body['status']) && $body['status'] !== 'OK') {
-            return array('success' => false, 'message' => 'API Status: ' . $body['status']);
+            $err_msg = isset($body['error_message']) ? ' - ' . $body['error_message'] : '';
+            return array('success' => false, 'message' => 'API Status: ' . $body['status'] . $err_msg);
         }
         
         if (!empty($body['results'][0]['place_id'])) {
@@ -486,7 +474,8 @@ class LDF_Professional_Enricher {
         }
         
         if (isset($body['status']) && $body['status'] !== 'OK') {
-            return array('success' => false, 'message' => 'API Status: ' . $body['status']);
+            $err_msg = isset($body['error_message']) ? ' - ' . $body['error_message'] : '';
+            return array('success' => false, 'message' => 'API Status: ' . $body['status'] . $err_msg);
         }
         
         if (empty($body['result'])) {
@@ -653,11 +642,11 @@ class LDF_Professional_Enricher {
     }
     
     /**
-     * Generate AI description using Hostinger AI
+     * Generate AI description using Gemini API
      */
     private function generate_description($post_id, $google_data = null) {
-        if (!$this->hostinger_client) {
-            return array('success' => false, 'message' => 'Hostinger AI not available');
+        if (empty($this->gemini_api_key)) {
+            return array('success' => false, 'message' => 'Gemini API Key not available');
         }
         
         $post = get_post($post_id);
@@ -710,32 +699,53 @@ class LDF_Professional_Enricher {
             }
         }
         
-        try {
-            $response = $this->hostinger_client->get('/v3/wordpress/plugin/generate-content', array(
-                'post_type' => 'business_description',
-                'tone' => 'professional',
-                'length' => '150-300',
-                'description' => $description
-            ));
-            
-            $response_code = wp_remote_retrieve_response_code($response);
-            $response_body = wp_remote_retrieve_body($response);
-            
-            if ($response_code === 200) {
-                $data = json_decode($response_body);
-                if (!empty($data->data[0]->content)) {
-                    return array(
-                        'success' => true,
-                        'content' => $data->data[0]->content
-                    );
-                }
-            }
-            
-            return array('success' => false, 'message' => 'API returned no content');
-            
-        } catch (Exception $e) {
-            return array('success' => false, 'message' => $e->getMessage());
+        $prompt = "Rédigez une description d'entreprise professionnelle de 150 à 300 mots, entièrement en FRANÇAIS, pour le professionnel ou l'entreprise suivante en fonction de ce contexte. N'utilisez pas de formules de politesse ou d'introduction, fournissez uniquement le texte de la description : \n\n" . $description;
+        
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $this->gemini_api_key;
+        
+        $payload = array(
+            'contents' => array(
+                array(
+                    'parts' => array(
+                        array('text' => $prompt)
+                    )
+                )
+            ),
+            'generationConfig' => array(
+                'temperature' => 0.7
+            )
+        );
+        
+        $args = array(
+            'body'        => json_encode($payload),
+            'timeout'     => 20,
+            'redirection' => 5,
+            'httpversion' => '1.0',
+            'blocking'    => true,
+            'headers'     => array(
+                'Content-Type' => 'application/json',
+            ),
+        );
+        
+        $response = wp_remote_post($url, $args);
+        
+        if (is_wp_error($response)) {
+            return array('success' => false, 'message' => $response->get_error_message());
         }
+        
+        $response_code = wp_remote_retrieve_response_code($response);
+        $response_body = wp_remote_retrieve_body($response);
+        $data = json_decode($response_body, true);
+        
+        if ($response_code === 200 && !empty($data['candidates'][0]['content']['parts'][0]['text'])) {
+            return array(
+                'success' => true,
+                'content' => trim($data['candidates'][0]['content']['parts'][0]['text'])
+            );
+        }
+        
+        $err_msg = isset($data['error']['message']) ? $data['error']['message'] : 'API returned no content';
+        return array('success' => false, 'message' => 'Gemini API Error: ' . $err_msg);
     }
 }
 
