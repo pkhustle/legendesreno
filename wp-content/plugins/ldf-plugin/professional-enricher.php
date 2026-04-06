@@ -418,20 +418,32 @@ class LDF_Professional_Enricher {
             return array('success' => false, 'message' => 'No address');
         }
         
-        $query = $post->post_title . ' ' . $address;
+        $query = trim($post->post_title . ' ' . $address);
         
         $url = add_query_arg(array(
-            'query' => urlencode($query),
+            'query' => $query,
             'key' => $this->google_api_key
         ), 'https://maps.googleapis.com/maps/api/place/textsearch/json');
         
-        $response = wp_remote_get($url);
+        $response = wp_remote_get($url, array('timeout' => 15));
         
         if (is_wp_error($response)) {
             return array('success' => false, 'message' => $response->get_error_message());
         }
         
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return array('success' => false, 'message' => "HTTP Error {$response_code}");
+        }
+        
         $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return array('success' => false, 'message' => 'Invalid JSON from Google API');
+        }
+        
+        if (isset($body['status']) && $body['status'] !== 'OK') {
+            return array('success' => false, 'message' => 'API Status: ' . $body['status']);
+        }
         
         if (!empty($body['results'][0]['place_id'])) {
             return array(
@@ -457,13 +469,25 @@ class LDF_Professional_Enricher {
             'key' => $this->google_api_key
         ), 'https://maps.googleapis.com/maps/api/place/details/json');
         
-        $response = wp_remote_get($url);
+        $response = wp_remote_get($url, array('timeout' => 15));
         
         if (is_wp_error($response)) {
             return array('success' => false, 'message' => $response->get_error_message());
         }
         
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return array('success' => false, 'message' => "HTTP Error {$response_code}");
+        }
+        
         $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return array('success' => false, 'message' => 'Invalid JSON from Google API');
+        }
+        
+        if (isset($body['status']) && $body['status'] !== 'OK') {
+            return array('success' => false, 'message' => 'API Status: ' . $body['status']);
+        }
         
         if (empty($body['result'])) {
             return array('success' => false, 'message' => 'No details found');
@@ -474,10 +498,13 @@ class LDF_Professional_Enricher {
         
         // Extract city from address_components
         if (!empty($result['address_components'])) {
-            foreach ($result['address_components'] as $component) {
-                if (in_array('locality', $component['types'])) {
-                    $data['city'] = $component['long_name'];
-                    break;
+            $city_types = array('locality', 'postal_town', 'sublocality_level_1', 'administrative_area_level_3');
+            foreach ($city_types as $type) {
+                foreach ($result['address_components'] as $component) {
+                    if (in_array($type, $component['types'])) {
+                        $data['city'] = $component['long_name'];
+                        break 2;
+                    }
                 }
             }
         }
@@ -523,6 +550,16 @@ class LDF_Professional_Enricher {
             return false;
         }
         
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200 && $response_code !== 302) {
+            return false;
+        }
+        
+        $content_type = wp_remote_retrieve_header($response, 'content-type');
+        if (strpos($content_type, 'image/') === false) {
+            return false;
+        }
+        
         $image_data = wp_remote_retrieve_body($response);
         
         if (empty($image_data)) {
@@ -535,10 +572,18 @@ class LDF_Professional_Enricher {
         require_once(ABSPATH . 'wp-admin/includes/image.php');
         
         $upload_dir = wp_upload_dir();
-        $filename = 'google-place-' . $photo_reference . '.jpg';
-        $filepath = $upload_dir['path'] . '/' . $filename;
+        if (wp_mkdir_p($upload_dir['path']) === false) {
+            return false; // Cannot create/verify upload directory
+        }
         
-        file_put_contents($filepath, $image_data);
+        $safe_ref = md5($photo_reference . time());
+        $filename = 'google-place-' . $safe_ref . '.jpg';
+        $filepath = wp_unique_filename($upload_dir['path'], $filename);
+        $full_filepath = $upload_dir['path'] . '/' . $filepath;
+        
+        if (file_put_contents($full_filepath, $image_data) === false) {
+            return false; // Failed to write file
+        }
         
         $filetype = wp_check_filetype($filename, null);
         
@@ -549,10 +594,10 @@ class LDF_Professional_Enricher {
             'post_status' => 'inherit'
         );
         
-        $attachment_id = wp_insert_attachment($attachment, $filepath, $post_id);
+        $attachment_id = wp_insert_attachment($attachment, $full_filepath, $post_id);
         
         if (!is_wp_error($attachment_id)) {
-            $attach_data = wp_generate_attachment_metadata($attachment_id, $filepath);
+            $attach_data = wp_generate_attachment_metadata($attachment_id, $full_filepath);
             wp_update_attachment_metadata($attachment_id, $attach_data);
             return $attachment_id;
         }
