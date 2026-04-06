@@ -21,6 +21,9 @@ define( 'WP_CACHE', true );
  * @package WordPress
  */
 
+ 
+ define('GOOGLE_PLACES_API_KEY', 'AIzaSyBTQ0IJ9Fed_heqnVMZseZ0C9f7ChtSZAk');
+
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define( 'DB_NAME', 'u987541567_VY3KB' );

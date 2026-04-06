@@ -104,3 +104,6 @@ function remove_projects_from_admin_bar($wp_admin_bar) {
     $wp_admin_bar->remove_node('new-project');
 }
 add_action('admin_bar_menu', 'remove_projects_from_admin_bar', 999);
+
+// Include Professional AI Enrichment feature
+require_once plugin_dir_path(__FILE__) . 'professional-enricher.php';
