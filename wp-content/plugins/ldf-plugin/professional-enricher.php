@@ -24,6 +24,17 @@ class LDF_Professional_Enricher {
     const ACF_TIMELINESS_AVG = 'timeliness_avg';
     const ACF_PROFESSIONALISM_AVG = 'professionalism_avg';
     const ACF_VALUE_AVG = 'value_for_money_avg';
+
+    // Email/pipeline meta and settings
+    const OPTION_GROUP = 'ldf_professional_email_settings_group';
+    const OPTION_NAME = 'ldf_professional_email_settings';
+    const META_EMAIL_SENT = '_ldf_email_sent';
+    const META_EMAIL_SENT_AT = '_ldf_email_sent_at';
+    const META_EMAIL_SENT_TO = '_ldf_email_sent_to';
+    const META_EMAIL_LAST_ERROR = '_ldf_email_last_error';
+    const META_PIPELINE_STAGE = '_ldf_pipeline_stage';
+
+    const DEFAULT_EMAIL_FIELD_KEY = 'email';
     
     // Site Reviews custom field names
     const REVIEW_QUALITY = 'quality_of_work';
@@ -33,6 +44,8 @@ class LDF_Professional_Enricher {
     
     private $gemini_api_key;
     private $google_api_key;
+
+    private $pipeline_stages = array('New', 'Contacted', 'Follow-up', 'Qualified', 'Won', 'Lost');
     
     public function __construct() {
         $this->google_api_key = defined('GOOGLE_PLACES_API_KEY') ? GOOGLE_PLACES_API_KEY : '';
@@ -41,15 +54,24 @@ class LDF_Professional_Enricher {
         // Admin hooks
         add_action('admin_footer-edit.php', array($this, 'add_bulk_action_js'));
         add_action('admin_action_enrich_professionals', array($this, 'handle_bulk_action'));
+        add_action('admin_action_ldf_send_professional_emails', array($this, 'handle_bulk_email_action'));
         add_filter('bulk_actions-edit-professional', array($this, 'add_bulk_action'));
         add_filter('post_row_actions', array($this, 'add_row_action'), 10, 2);
+        add_filter('manage_professional_posts_columns', array($this, 'add_admin_columns'));
+        add_action('manage_professional_posts_custom_column', array($this, 'render_admin_columns'), 10, 2);
         
         // AJAX handlers
         add_action('wp_ajax_ldf_enrich_professional', array($this, 'ajax_enrich_professional'));
-        add_action('wp_ajax_ldf_enrich_bulk', array($this, 'ajax_enrich_bulk'));
+        add_action('wp_ajax_ldf_send_professional_email', array($this, 'ajax_send_professional_email'));
+        add_action('wp_ajax_ldf_preview_professional_email', array($this, 'ajax_preview_professional_email'));
         
         // Meta box
         add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('save_post_professional', array($this, 'save_professional_meta'));
+
+        // Settings / board
+        add_action('admin_menu', array($this, 'register_admin_pages'));
+        add_action('admin_init', array($this, 'register_settings'));
     }
     
     /**
@@ -57,6 +79,7 @@ class LDF_Professional_Enricher {
      */
     public function add_bulk_action($bulk_actions) {
         $bulk_actions['enrich_professionals'] = __('Enrich with AI', 'ldf-plugin');
+        $bulk_actions['ldf_send_professional_emails'] = __('Send predefined email', 'ldf-plugin');
         return $bulk_actions;
     }
     
@@ -70,8 +93,280 @@ class LDF_Professional_Enricher {
                 $post->ID,
                 __('Enrich', 'ldf-plugin')
             );
+            $actions['ldf_send_email'] = sprintf(
+                '<a href="#" class="ldf-send-email-single" data-post-id="%d">%s</a>',
+                $post->ID,
+                __('Send Email', 'ldf-plugin')
+            );
         }
         return $actions;
+    }
+
+    /**
+     * Add admin columns to the professional list table
+     */
+    public function add_admin_columns($columns) {
+        $new_columns = array();
+
+        foreach ($columns as $key => $label) {
+            $new_columns[$key] = $label;
+
+            if ($key === 'title') {
+                $new_columns['ldf_pipeline_stage'] = __('Pipeline Stage', 'ldf-plugin');
+                $new_columns['ldf_email_sent'] = __('Email Sent', 'ldf-plugin');
+            }
+        }
+
+        return $new_columns;
+    }
+
+    /**
+     * Render admin columns content
+     */
+    public function render_admin_columns($column, $post_id) {
+        if ($column === 'ldf_pipeline_stage') {
+            echo esc_html($this->get_pipeline_stage($post_id));
+            return;
+        }
+
+        if ($column === 'ldf_email_sent') {
+            $sent = get_post_meta($post_id, self::META_EMAIL_SENT, true);
+            $sent_at = get_post_meta($post_id, self::META_EMAIL_SENT_AT, true);
+            $sent_to = get_post_meta($post_id, self::META_EMAIL_SENT_TO, true);
+            $error = get_post_meta($post_id, self::META_EMAIL_LAST_ERROR, true);
+
+            if ($sent) {
+                echo '<strong style="color:green;">' . esc_html__('Yes', 'ldf-plugin') . '</strong>';
+                if (!empty($sent_at)) {
+                    echo '<br><small>' . esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), intval($sent_at))) . '</small>';
+                }
+                if (!empty($sent_to)) {
+                    echo '<br><small>' . esc_html($sent_to) . '</small>';
+                }
+            } else {
+                echo '<span style="color:#666;">' . esc_html__('No', 'ldf-plugin') . '</span>';
+                if (!empty($error)) {
+                    echo '<br><small style="color:#b32d2e;">' . esc_html($error) . '</small>';
+                }
+            }
+        }
+    }
+
+    /**
+     * Register admin pages under Professionals
+     */
+    public function register_admin_pages() {
+        add_submenu_page(
+            'edit.php?post_type=professional',
+            __('Professional Email Settings', 'ldf-plugin'),
+            __('Email Settings', 'ldf-plugin'),
+            'manage_options',
+            'ldf-professional-email-settings',
+            array($this, 'render_settings_page')
+        );
+
+        add_submenu_page(
+            'edit.php?post_type=professional',
+            __('Professional Pipeline Board', 'ldf-plugin'),
+            __('Pipeline Board', 'ldf-plugin'),
+            'edit_posts',
+            'ldf-professional-pipeline-board',
+            array($this, 'render_pipeline_board_page')
+        );
+    }
+
+    /**
+     * Register settings for the predefined email template
+     */
+    public function register_settings() {
+        register_setting(
+            self::OPTION_GROUP,
+            self::OPTION_NAME,
+            array($this, 'sanitize_settings')
+        );
+
+        add_settings_section(
+            'ldf_professional_email_main',
+            __('Predefined Email Template', 'ldf-plugin'),
+            '__return_false',
+            'ldf-professional-email-settings'
+        );
+
+        add_settings_field(
+            'email_field_key',
+            __('Email Field Key', 'ldf-plugin'),
+            array($this, 'render_email_field_key_field'),
+            'ldf-professional-email-settings',
+            'ldf_professional_email_main'
+        );
+
+        add_settings_field(
+            'subject',
+            __('Email Subject', 'ldf-plugin'),
+            array($this, 'render_subject_field'),
+            'ldf-professional-email-settings',
+            'ldf_professional_email_main'
+        );
+
+        add_settings_field(
+            'body',
+            __('Email Body', 'ldf-plugin'),
+            array($this, 'render_body_field'),
+            'ldf-professional-email-settings',
+            'ldf_professional_email_main'
+        );
+    }
+
+    /**
+     * Sanitize settings before save
+     */
+    public function sanitize_settings($input) {
+        return array(
+            'email_field_key' => sanitize_key($input['email_field_key'] ?? self::DEFAULT_EMAIL_FIELD_KEY),
+            'subject' => sanitize_text_field($input['subject'] ?? ''),
+            'body' => wp_kses_post($input['body'] ?? ''),
+        );
+    }
+
+    public function render_email_field_key_field() {
+        $settings = $this->get_email_settings();
+        ?>
+        <input type="text" name="<?php echo esc_attr(self::OPTION_NAME); ?>[email_field_key]" value="<?php echo esc_attr($settings['email_field_key']); ?>" class="regular-text" />
+        <p class="description"><?php esc_html_e('ACF/meta field key that contains the recipient email on professional posts.', 'ldf-plugin'); ?></p>
+        <?php
+    }
+
+    public function render_subject_field() {
+        $settings = $this->get_email_settings();
+        ?>
+        <input type="text" name="<?php echo esc_attr(self::OPTION_NAME); ?>[subject]" value="<?php echo esc_attr($settings['subject']); ?>" class="regular-text" />
+        <p class="description"><?php esc_html_e('Available placeholders: {name}, {stage}, {site_name}', 'ldf-plugin'); ?></p>
+        <?php
+    }
+
+    public function render_body_field() {
+        $settings = $this->get_email_settings();
+        ?>
+        <textarea name="<?php echo esc_attr(self::OPTION_NAME); ?>[body]" rows="10" class="large-text"><?php echo esc_textarea($settings['body']); ?></textarea>
+        <p class="description"><?php esc_html_e('Available placeholders: {name}, {stage}, {site_name}', 'ldf-plugin'); ?></p>
+        <?php
+    }
+
+    public function render_settings_page() {
+        $sample_professionals = get_posts(array(
+            'post_type' => 'professional',
+            'post_status' => array('publish', 'draft', 'pending', 'private'),
+            'numberposts' => 50,
+            'orderby' => 'title',
+            'order' => 'ASC',
+        ));
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('Professional Email Settings', 'ldf-plugin'); ?></h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields(self::OPTION_GROUP);
+                do_settings_sections('ldf-professional-email-settings');
+                submit_button();
+                ?>
+            </form>
+
+            <hr style="margin:24px 0;">
+            <h2><?php esc_html_e('Email Preview', 'ldf-plugin'); ?></h2>
+            <p><?php esc_html_e('Preview how the email will render for a specific professional before sending it.', 'ldf-plugin'); ?></p>
+            <p>
+                <select id="ldf-settings-preview-post" style="min-width:280px;">
+                    <option value=""><?php esc_html_e('Select a professional', 'ldf-plugin'); ?></option>
+                    <?php foreach ($sample_professionals as $professional) : ?>
+                        <option value="<?php echo esc_attr($professional->ID); ?>"><?php echo esc_html(get_the_title($professional->ID)); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="button" class="button button-secondary" id="ldf-settings-preview-btn"><?php esc_html_e('Preview Email', 'ldf-plugin'); ?></button>
+            </p>
+            <div id="ldf-settings-preview-output" style="display:none; background:#fff; border:1px solid #dcdcde; border-radius:8px; padding:16px; max-width:900px;">
+                <p><strong><?php esc_html_e('Recipient:', 'ldf-plugin'); ?></strong> <span id="ldf-settings-preview-recipient"></span></p>
+                <p><strong><?php esc_html_e('Subject:', 'ldf-plugin'); ?></strong> <span id="ldf-settings-preview-subject"></span></p>
+                <div>
+                    <strong><?php esc_html_e('Body:', 'ldf-plugin'); ?></strong>
+                    <div id="ldf-settings-preview-body" style="margin-top:8px; padding:12px; background:#f6f7f7; border-radius:6px;"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#ldf-settings-preview-btn').on('click', function() {
+                var postId = $('#ldf-settings-preview-post').val();
+
+                if (!postId) {
+                    alert('<?php echo esc_js(__('Please select a professional to preview.', 'ldf-plugin')); ?>');
+                    return;
+                }
+
+                $.post(ajaxurl, {
+                    action: 'ldf_preview_professional_email',
+                    post_id: postId,
+                    nonce: '<?php echo wp_create_nonce('ldf_preview_professional_email'); ?>'
+                }, function(response) {
+                    if (!response.success) {
+                        alert(response.data.message || '<?php echo esc_js(__('Unable to preview email.', 'ldf-plugin')); ?>');
+                        return;
+                    }
+
+                    $('#ldf-settings-preview-recipient').text(response.data.recipient || '—');
+                    $('#ldf-settings-preview-subject').text(response.data.subject || '—');
+                    $('#ldf-settings-preview-body').html(response.data.body || '<em>—</em>');
+                    $('#ldf-settings-preview-output').show();
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+
+    public function render_pipeline_board_page() {
+        $professionals = get_posts(array(
+            'post_type' => 'professional',
+            'post_status' => array('publish', 'draft', 'pending', 'private'),
+            'numberposts' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC',
+        ));
+
+        $grouped = array_fill_keys($this->pipeline_stages, array());
+
+        foreach ($professionals as $professional) {
+            $stage = $this->get_pipeline_stage($professional->ID);
+            if (!isset($grouped[$stage])) {
+                $grouped[$stage] = array();
+            }
+            $grouped[$stage][] = $professional;
+        }
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('Professional Pipeline Board', 'ldf-plugin'); ?></h1>
+            <p><?php esc_html_e('Kanban view of professionals grouped by pipeline stage.', 'ldf-plugin'); ?></p>
+            <div style="display:flex; gap:16px; align-items:flex-start; overflow-x:auto; padding-top:12px;">
+                <?php foreach ($this->pipeline_stages as $stage) : ?>
+                    <div style="min-width:260px; background:#f6f7f7; border:1px solid #dcdcde; border-radius:8px; padding:12px;">
+                        <h2 style="margin-top:0; font-size:16px;"><?php echo esc_html($stage); ?> <span style="color:#666; font-weight:normal;">(<?php echo count($grouped[$stage]); ?>)</span></h2>
+                        <?php if (empty($grouped[$stage])) : ?>
+                            <p style="color:#666;"><?php esc_html_e('No professionals', 'ldf-plugin'); ?></p>
+                        <?php else : ?>
+                            <?php foreach ($grouped[$stage] as $professional) : ?>
+                                <?php $sent = get_post_meta($professional->ID, self::META_EMAIL_SENT, true); ?>
+                                <div style="background:#fff; border:1px solid #dcdcde; border-radius:6px; padding:10px; margin-bottom:10px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                                    <strong><a href="<?php echo esc_url(get_edit_post_link($professional->ID)); ?>"><?php echo esc_html(get_the_title($professional->ID)); ?></a></strong>
+                                    <div style="margin-top:6px; color:#666; font-size:12px;">
+                                        <?php echo $sent ? '<span style="color:green;">' . esc_html__('Email sent', 'ldf-plugin') . '</span>' : esc_html__('Email not sent', 'ldf-plugin'); ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php
     }
     
     /**
@@ -93,7 +388,35 @@ class LDF_Professional_Enricher {
      */
     public function render_meta_box($post) {
         wp_nonce_field('ldf_enrich_single', 'ldf_enrich_nonce');
+        wp_nonce_field('ldf_professional_meta', 'ldf_professional_meta_nonce');
+        $current_stage = $this->get_pipeline_stage($post->ID);
+        $sent = get_post_meta($post->ID, self::META_EMAIL_SENT, true);
+        $sent_at = get_post_meta($post->ID, self::META_EMAIL_SENT_AT, true);
+        $sent_to = get_post_meta($post->ID, self::META_EMAIL_SENT_TO, true);
         ?>
+        <p>
+            <label for="ldf_pipeline_stage"><strong><?php _e('Pipeline Stage', 'ldf-plugin'); ?></strong></label><br>
+            <select name="ldf_pipeline_stage" id="ldf_pipeline_stage" style="width:100%;">
+                <?php foreach ($this->pipeline_stages as $stage) : ?>
+                    <option value="<?php echo esc_attr($stage); ?>" <?php selected($current_stage, $stage); ?>><?php echo esc_html($stage); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+
+        <p class="description" style="margin-bottom:12px;">
+            <?php if ($sent) : ?>
+                <span style="color:green;"><?php _e('Last email sent', 'ldf-plugin'); ?></span>
+                <?php if (!empty($sent_at)) : ?>
+                    <br><?php echo esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), intval($sent_at))); ?>
+                <?php endif; ?>
+                <?php if (!empty($sent_to)) : ?>
+                    <br><?php echo esc_html($sent_to); ?>
+                <?php endif; ?>
+            <?php else : ?>
+                <?php _e('No email sent yet.', 'ldf-plugin'); ?>
+            <?php endif; ?>
+        </p>
+
         <div id="ldf-enrich-status"></div>
         <button type="button" class="button button-primary button-large" id="ldf-enrich-single-btn" style="width:100%;">
             <?php _e('Enrich with AI', 'ldf-plugin'); ?>
@@ -131,6 +454,30 @@ class LDF_Professional_Enricher {
         </script>
         <?php
     }
+
+    /**
+     * Save custom professional meta from edit screen
+     */
+    public function save_professional_meta($post_id) {
+        if (!isset($_POST['ldf_professional_meta_nonce']) || !wp_verify_nonce($_POST['ldf_professional_meta_nonce'], 'ldf_professional_meta')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        $stage = isset($_POST['ldf_pipeline_stage']) ? sanitize_text_field(wp_unslash($_POST['ldf_pipeline_stage'])) : 'New';
+        if (!in_array($stage, $this->pipeline_stages, true)) {
+            $stage = 'New';
+        }
+
+        update_post_meta($post_id, self::META_PIPELINE_STAGE, $stage);
+    }
     
     /**
      * Handle bulk action redirect
@@ -143,6 +490,22 @@ class LDF_Professional_Enricher {
                 'post_ids' => implode(',', $post_ids)
             ), admin_url('edit.php?post_type=professional'));
             
+            wp_redirect($redirect_url);
+            exit;
+        }
+    }
+
+    /**
+     * Handle bulk email action redirect
+     */
+    public function handle_bulk_email_action() {
+        if (isset($_REQUEST['post']) && is_array($_REQUEST['post'])) {
+            $post_ids = array_map('intval', $_REQUEST['post']);
+            $redirect_url = add_query_arg(array(
+                'ldf_bulk_email_preview' => '1',
+                'post_ids' => implode(',', $post_ids)
+            ), admin_url('edit.php?post_type=professional'));
+
             wp_redirect($redirect_url);
             exit;
         }
@@ -221,11 +584,131 @@ class LDF_Professional_Enricher {
             </script>
             <?php
         }
+
+        if (isset($_GET['ldf_bulk_email_preview']) && isset($_GET['post_ids'])) {
+            $post_ids = array_map('intval', explode(',', sanitize_text_field($_GET['post_ids'])));
+            $preview_items = array();
+
+            foreach ($post_ids as $post_id) {
+                $preview = $this->get_email_preview_data($post_id);
+                $preview_items[] = $preview;
+            }
+            ?>
+            <div id="ldf-bulk-email-preview" class="notice notice-info" style="position:relative; padding:20px;">
+                <h3><?php _e('Preview Emails Before Sending', 'ldf-plugin'); ?></h3>
+                <p><?php _e('Review the rendered emails below, then confirm to send them.', 'ldf-plugin'); ?></p>
+                <div style="max-height:360px; overflow-y:auto; background:#fff; border:1px solid #dcdcde; border-radius:6px; padding:12px;">
+                    <?php foreach ($preview_items as $item) : ?>
+                        <div style="padding:12px 0; border-bottom:1px solid #eee;">
+                            <p style="margin:0 0 6px;"><strong><?php echo esc_html($item['name']); ?></strong></p>
+                            <p style="margin:0 0 6px;"><strong><?php esc_html_e('Recipient:', 'ldf-plugin'); ?></strong> <?php echo esc_html($item['recipient'] ?: '—'); ?></p>
+                            <p style="margin:0 0 6px;"><strong><?php esc_html_e('Subject:', 'ldf-plugin'); ?></strong> <?php echo esc_html($item['subject'] ?: '—'); ?></p>
+                            <div style="background:#f6f7f7; border-radius:6px; padding:10px;"><?php echo $item['body'] ? wp_kses_post($item['body']) : '<em>' . esc_html__('No preview available', 'ldf-plugin') . '</em>'; ?></div>
+                            <?php if (!$item['can_send'] && !empty($item['message'])) : ?>
+                                <p style="color:#b32d2e; margin:8px 0 0;"><?php echo esc_html($item['message']); ?></p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p style="margin-top:12px;">
+                    <button type="button" class="button button-primary" id="ldf-confirm-bulk-email-send"><?php esc_html_e('Confirm and Send', 'ldf-plugin'); ?></button>
+                    <a href="<?php echo esc_url(admin_url('edit.php?post_type=professional')); ?>" class="button"><?php esc_html_e('Cancel', 'ldf-plugin'); ?></a>
+                </p>
+            </div>
+
+            <div id="ldf-bulk-email-progress" class="notice notice-info" style="position:relative; padding:20px; display:none;">
+                <h3><?php _e('Sending Emails...', 'ldf-plugin'); ?></h3>
+                <div style="background:#ccc; height:20px; border-radius:3px; overflow:hidden;">
+                    <div id="ldf-email-progress-fill" style="background:#2271b1; height:100%; width:0%; transition:width 0.3s;"></div>
+                </div>
+                <p id="ldf-email-progress-text">0 / <?php echo count($post_ids); ?></p>
+                <div id="ldf-email-progress-details" style="max-height:200px; overflow-y:auto; margin-top:10px;"></div>
+            </div>
+            <script>
+            jQuery(document).ready(function($) {
+                var postIds = <?php echo json_encode($post_ids); ?>;
+                var total = postIds.length;
+                var completed = 0;
+
+                function sendNext(index) {
+                    if (index >= total) {
+                        $('#ldf-bulk-email-progress').removeClass('notice-info').addClass('notice-success');
+                        $('#ldf-bulk-email-progress h3').text('<?php _e('Email Sending Complete!', 'ldf-plugin'); ?>');
+                        setTimeout(function() {
+                            window.location.href = '<?php echo admin_url('edit.php?post_type=professional'); ?>';
+                        }, 2000);
+                        return;
+                    }
+
+                    var postId = postIds[index];
+
+                    $.post(ajaxurl, {
+                        action: 'ldf_send_professional_email',
+                        post_id: postId,
+                        nonce: '<?php echo wp_create_nonce('ldf_send_professional_email'); ?>'
+                    }, function(response) {
+                        completed++;
+                        var percent = Math.round((completed / total) * 100);
+                        $('#ldf-email-progress-fill').css('width', percent + '%');
+                        $('#ldf-email-progress-text').text(completed + ' / ' + total);
+
+                        var status = response.success ? '✓' : '✗';
+                        var message = response.data.message || (response.success ? 'Success' : 'Failed');
+
+                        $('#ldf-email-progress-details').append(
+                            '<div style="color:' + (response.success ? 'green' : 'red') + ';">' +
+                            status + ' Post #' + postId + ': ' + message +
+                            '</div>'
+                        );
+
+                        sendNext(index + 1);
+                    }).fail(function() {
+                        completed++;
+                        $('#ldf-email-progress-details').append('<div style="color:red;">✗ Post #' + postId + ': Network error</div>');
+                        sendNext(index + 1);
+                    });
+                }
+
+                $('#ldf-confirm-bulk-email-send').on('click', function() {
+                    $('#ldf-bulk-email-preview').hide();
+                    $('#ldf-bulk-email-progress').show();
+                    sendNext(0);
+                });
+            });
+            </script>
+            <?php
+        }
         
         // Add click handler for row actions
         ?>
         <script>
         jQuery(document).ready(function($) {
+            if (!$('#ldf-email-preview-modal').length) {
+                $('body').append(
+                    '<div id="ldf-email-preview-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:99999;">' +
+                        '<div style="max-width:820px; margin:6vh auto; background:#fff; border-radius:8px; padding:20px; max-height:88vh; overflow:auto;">' +
+                            '<h2><?php echo esc_js(__('Email Preview', 'ldf-plugin')); ?></h2>' +
+                            '<p><strong><?php echo esc_js(__('Recipient:', 'ldf-plugin')); ?></strong> <span id="ldf-preview-recipient"></span></p>' +
+                            '<p><strong><?php echo esc_js(__('Subject:', 'ldf-plugin')); ?></strong> <span id="ldf-preview-subject"></span></p>' +
+                            '<div id="ldf-preview-body" style="background:#f6f7f7; border-radius:6px; padding:12px; margin-bottom:16px;"></div>' +
+                            '<div style="display:flex; gap:8px; justify-content:flex-end;">' +
+                                '<button type="button" class="button" id="ldf-preview-cancel"><?php echo esc_js(__('Cancel', 'ldf-plugin')); ?></button>' +
+                                '<button type="button" class="button button-primary" id="ldf-preview-confirm"><?php echo esc_js(__('Send Email', 'ldf-plugin')); ?></button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>'
+                );
+            }
+
+            function closePreviewModal() {
+                $('#ldf-email-preview-modal').hide();
+                $('#ldf-preview-confirm').off('click');
+            }
+
+            $('#ldf-preview-cancel').on('click', function() {
+                closePreviewModal();
+            });
+
             $(document).on('click', '.ldf-enrich-single', function(e) {
                 e.preventDefault();
                 var postId = $(this).data('post-id');
@@ -250,6 +733,47 @@ class LDF_Professional_Enricher {
                     } else {
                         $link.text('✗ ' + response.data.message);
                     }
+                });
+            });
+
+            $(document).on('click', '.ldf-send-email-single', function(e) {
+                e.preventDefault();
+                var postId = $(this).data('post-id');
+                var $link = $(this);
+                $.post(ajaxurl, {
+                    action: 'ldf_preview_professional_email',
+                    post_id: postId,
+                    nonce: '<?php echo wp_create_nonce('ldf_preview_professional_email'); ?>'
+                }, function(response) {
+                    if (!response.success) {
+                        alert(response.data.message || '<?php echo esc_js(__('Unable to preview this email.', 'ldf-plugin')); ?>');
+                        return;
+                    }
+
+                    $('#ldf-preview-recipient').text(response.data.recipient || '—');
+                    $('#ldf-preview-subject').text(response.data.subject || '—');
+                    $('#ldf-preview-body').html(response.data.body || '<em>—</em>');
+                    $('#ldf-email-preview-modal').show();
+
+                    $('#ldf-preview-confirm').on('click', function() {
+                        closePreviewModal();
+                        $link.text('<?php _e('Sending...', 'ldf-plugin'); ?>');
+
+                        $.post(ajaxurl, {
+                            action: 'ldf_send_professional_email',
+                            post_id: postId,
+                            nonce: '<?php echo wp_create_nonce('ldf_send_professional_email'); ?>'
+                        }, function(sendResponse) {
+                            if (sendResponse.success) {
+                                $link.text('✓ ' + sendResponse.data.message);
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                $link.text('✗ ' + sendResponse.data.message);
+                            }
+                        });
+                    });
                 });
             });
         });
@@ -280,6 +804,60 @@ class LDF_Professional_Enricher {
         } else {
             wp_send_json_error(array('message' => $result['message']));
         }
+    }
+
+    /**
+     * AJAX handler for sending a predefined email
+     */
+    public function ajax_send_professional_email() {
+        check_ajax_referer('ldf_send_professional_email', 'nonce');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(array('message' => __('Permission denied', 'ldf-plugin')));
+        }
+
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+
+        if (!$post_id || get_post_type($post_id) !== 'professional') {
+            wp_send_json_error(array('message' => __('Invalid post', 'ldf-plugin')));
+        }
+
+        $result = $this->send_predefined_email($post_id);
+
+        if ($result['success']) {
+            wp_send_json_success(array('message' => $result['message']));
+        }
+
+        wp_send_json_error(array('message' => $result['message']));
+    }
+
+    /**
+     * AJAX handler for previewing a predefined email
+     */
+    public function ajax_preview_professional_email() {
+        check_ajax_referer('ldf_preview_professional_email', 'nonce');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(array('message' => __('Permission denied', 'ldf-plugin')));
+        }
+
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+
+        if (!$post_id || get_post_type($post_id) !== 'professional') {
+            wp_send_json_error(array('message' => __('Invalid post', 'ldf-plugin')));
+        }
+
+        $preview = $this->get_email_preview_data($post_id);
+
+        if (!$preview['can_send']) {
+            wp_send_json_error(array('message' => $preview['message']));
+        }
+
+        wp_send_json_success(array(
+            'recipient' => $preview['recipient'],
+            'subject' => $preview['subject'],
+            'body' => $preview['body'],
+        ));
     }
     
     /**
@@ -388,6 +966,152 @@ class LDF_Professional_Enricher {
             'success' => !empty($updated),
             'message' => !empty($message) ? $message : 'No updates needed'
         );
+    }
+
+    /**
+     * Send the predefined email to a professional
+     */
+    private function send_predefined_email($post_id) {
+        $settings = $this->get_email_settings();
+        $recipient = $this->get_professional_email($post_id, $settings['email_field_key']);
+
+        if (empty($recipient) || !is_email($recipient)) {
+            update_post_meta($post_id, self::META_EMAIL_LAST_ERROR, __('No valid email address found', 'ldf-plugin'));
+            return array('success' => false, 'message' => __('No valid email address found', 'ldf-plugin'));
+        }
+
+        if (empty($settings['subject']) || empty(trim(wp_strip_all_tags($settings['body'])))) {
+            update_post_meta($post_id, self::META_EMAIL_LAST_ERROR, __('Email template is not configured', 'ldf-plugin'));
+            return array('success' => false, 'message' => __('Email template is not configured', 'ldf-plugin'));
+        }
+
+        $subject = $this->replace_email_placeholders($settings['subject'], $post_id);
+        $body = nl2br($this->replace_email_placeholders($settings['body'], $post_id));
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+
+        $sent = wp_mail($recipient, $subject, $body, $headers);
+
+        if (!$sent) {
+            update_post_meta($post_id, self::META_EMAIL_LAST_ERROR, __('wp_mail failed to send the email', 'ldf-plugin'));
+            return array('success' => false, 'message' => __('Email failed to send', 'ldf-plugin'));
+        }
+
+        update_post_meta($post_id, self::META_EMAIL_SENT, 1);
+        update_post_meta($post_id, self::META_EMAIL_SENT_AT, time());
+        update_post_meta($post_id, self::META_EMAIL_SENT_TO, sanitize_email($recipient));
+        delete_post_meta($post_id, self::META_EMAIL_LAST_ERROR);
+
+        $current_stage = $this->get_pipeline_stage($post_id);
+        if ($current_stage === 'New') {
+            update_post_meta($post_id, self::META_PIPELINE_STAGE, 'Contacted');
+        }
+
+        return array('success' => true, 'message' => __('Email sent', 'ldf-plugin'));
+    }
+
+    /**
+     * Build preview data for a professional email
+     */
+    private function get_email_preview_data($post_id) {
+        $settings = $this->get_email_settings();
+        $recipient = $this->get_professional_email($post_id, $settings['email_field_key']);
+
+        if (empty($recipient) || !is_email($recipient)) {
+            return array(
+                'can_send' => false,
+                'message' => __('No valid email address found', 'ldf-plugin'),
+                'name' => get_the_title($post_id),
+                'recipient' => '',
+                'subject' => '',
+                'body' => '',
+            );
+        }
+
+        if (empty($settings['subject']) || empty(trim(wp_strip_all_tags($settings['body'])))) {
+            return array(
+                'can_send' => false,
+                'message' => __('Email template is not configured', 'ldf-plugin'),
+                'name' => get_the_title($post_id),
+                'recipient' => $recipient,
+                'subject' => '',
+                'body' => '',
+            );
+        }
+
+        return array(
+            'can_send' => true,
+            'message' => '',
+            'name' => get_the_title($post_id),
+            'recipient' => $recipient,
+            'subject' => $this->replace_email_placeholders($settings['subject'], $post_id),
+            'body' => nl2br($this->replace_email_placeholders($settings['body'], $post_id)),
+        );
+    }
+
+    /**
+     * Resolve professional email from ACF/meta
+     */
+    private function get_professional_email($post_id, $field_key) {
+        $email = '';
+
+        if (function_exists('get_field')) {
+            $email = get_field($field_key, $post_id);
+        }
+
+        if (empty($email)) {
+            $email = get_post_meta($post_id, $field_key, true);
+        }
+
+        if (empty($email) && $field_key !== self::DEFAULT_EMAIL_FIELD_KEY) {
+            if (function_exists('get_field')) {
+                $email = get_field(self::DEFAULT_EMAIL_FIELD_KEY, $post_id);
+            }
+            if (empty($email)) {
+                $email = get_post_meta($post_id, self::DEFAULT_EMAIL_FIELD_KEY, true);
+            }
+        }
+
+        return is_string($email) ? trim($email) : '';
+    }
+
+    /**
+     * Get email settings with defaults
+     */
+    private function get_email_settings() {
+        $defaults = array(
+            'email_field_key' => self::DEFAULT_EMAIL_FIELD_KEY,
+            'subject' => '',
+            'body' => '',
+        );
+
+        $settings = get_option(self::OPTION_NAME, array());
+        return wp_parse_args(is_array($settings) ? $settings : array(), $defaults);
+    }
+
+    /**
+     * Get current pipeline stage for a professional
+     */
+    private function get_pipeline_stage($post_id) {
+        $stage = get_post_meta($post_id, self::META_PIPELINE_STAGE, true);
+
+        if (empty($stage) || !in_array($stage, $this->pipeline_stages, true)) {
+            return 'New';
+        }
+
+        return $stage;
+    }
+
+    /**
+     * Replace placeholders in subject/body
+     */
+    private function replace_email_placeholders($text, $post_id) {
+        $replacements = array(
+            '{name}' => get_the_title($post_id),
+            '{stage}' => $this->get_pipeline_stage($post_id),
+            '{site_name}' => get_bloginfo('name'),
+        );
+
+        return strtr((string) $text, $replacements);
     }
     
     /**
