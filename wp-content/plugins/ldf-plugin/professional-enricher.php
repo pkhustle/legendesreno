@@ -16,10 +16,19 @@ if (!defined('ABSPATH')) {
 class LDF_Professional_Enricher {
     
     // ACF Field Names - Adjust these if your field names differ
+    const ACF_WEBSITE = 'website';
+    const ACF_EMAIL = 'email';
+    const ACF_PHONE = 'phone';
     const ACF_ADDRESS = 'full-address';
     const ACF_CITY = 'city';
+    const ACF_LOGO = 'logo';
     const ACF_PHOTOS = 'image_gallery';
     const ACF_PLACE_ID = 'place_id';
+    const ACF_OWNER_NAME = 'proprietaire';
+    const ACF_AWARDS = 'awards_and_recognitions';
+    const ACF_CERTIFICATIONS = 'certifications';
+    const ACF_SERVICE_AREAS = 'service_areas';
+    const ACF_YEARS_IN_BUSINESS = 'years_in_business';
     const ACF_QUALITY_AVG = 'average_rating';
     const ACF_TIMELINESS_AVG = 'timeliness_avg';
     const ACF_PROFESSIONALISM_AVG = 'professionalism_avg';
@@ -33,6 +42,11 @@ class LDF_Professional_Enricher {
     const META_EMAIL_SENT_TO = '_ldf_email_sent_to';
     const META_EMAIL_LAST_ERROR = '_ldf_email_last_error';
     const META_PIPELINE_STAGE = '_ldf_pipeline_stage';
+    const META_NORMALIZED_WEBSITE = '_ldf_normalized_website';
+    const META_NORMALIZED_EMAIL = '_ldf_normalized_email';
+    const META_NORMALIZED_PHONE = '_ldf_normalized_phone';
+    const META_NORMALIZED_TITLE = '_ldf_normalized_title';
+    const IMPORT_RESULT_TRANSIENT_PREFIX = 'ldf_professional_import_result_';
 
     const DEFAULT_EMAIL_FIELD_KEY = 'email';
     
@@ -55,6 +69,7 @@ class LDF_Professional_Enricher {
         add_action('admin_footer-edit.php', array($this, 'add_bulk_action_js'));
         add_action('admin_action_enrich_professionals', array($this, 'handle_bulk_action'));
         add_action('admin_action_ldf_send_professional_emails', array($this, 'handle_bulk_email_action'));
+        add_action('admin_post_ldf_import_professional_from_urls', array($this, 'handle_import_professional_from_urls'));
         add_filter('bulk_actions-edit-professional', array($this, 'add_bulk_action'));
         add_filter('post_row_actions', array($this, 'add_row_action'), 10, 2);
         add_filter('manage_professional_posts_columns', array($this, 'add_admin_columns'));
@@ -172,6 +187,15 @@ class LDF_Professional_Enricher {
             'edit_posts',
             'ldf-professional-pipeline-board',
             array($this, 'render_pipeline_board_page')
+        );
+
+        add_submenu_page(
+            'edit.php?post_type=professional',
+            __('Import Professional from URLs', 'ldf-plugin'),
+            __('Import from URLs', 'ldf-plugin'),
+            'edit_posts',
+            'ldf-professional-import',
+            array($this, 'render_import_page')
         );
     }
 
@@ -368,6 +392,68 @@ class LDF_Professional_Enricher {
         </div>
         <?php
     }
+
+    /**
+     * Render importer page for creating professionals from URLs
+     */
+    public function render_import_page() {
+        if (!current_user_can('edit_posts')) {
+            wp_die(esc_html__('You do not have permission to access this page.', 'ldf-plugin'));
+        }
+
+        $result = get_transient($this->get_import_result_transient_key());
+        if ($result) {
+            delete_transient($this->get_import_result_transient_key());
+        }
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('Import Professional from URLs', 'ldf-plugin'); ?></h1>
+            <p><?php esc_html_e('Paste one or two public URLs. The importer will scrape available business information, create a new Professional record, save matching fields, and then run the existing enrichment flow when possible.', 'ldf-plugin'); ?></p>
+
+            <?php if (!empty($result)) : ?>
+                <div class="notice notice-<?php echo !empty($result['success']) ? 'success' : 'error'; ?>">
+                    <p><strong><?php echo esc_html($result['message']); ?></strong></p>
+                    <?php if (!empty($result['details'])) : ?>
+                        <ul style="list-style:disc; margin-left:20px;">
+                            <?php foreach ($result['details'] as $detail) : ?>
+                                <li><?php echo esc_html($detail); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <?php if (!empty($result['edit_link'])) : ?>
+                        <p><a class="button button-primary" href="<?php echo esc_url($result['edit_link']); ?>"><?php esc_html_e('Edit Imported Professional', 'ldf-plugin'); ?></a></p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="max-width:900px; background:#fff; padding:24px; border:1px solid #dcdcde; border-radius:8px;">
+                <input type="hidden" name="action" value="ldf_import_professional_from_urls" />
+                <?php wp_nonce_field('ldf_import_professional_from_urls', 'ldf_import_professional_nonce'); ?>
+
+                <table class="form-table" role="presentation">
+                    <tbody>
+                        <tr>
+                            <th scope="row"><label for="ldf_import_url_1"><?php esc_html_e('URL 1', 'ldf-plugin'); ?></label></th>
+                            <td>
+                                <input type="url" class="regular-text code" style="width:100%;" id="ldf_import_url_1" name="ldf_import_url_1" placeholder="https://example.com" required />
+                                <p class="description"><?php esc_html_e('Primary source URL, usually the company website or profile page.', 'ldf-plugin'); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="ldf_import_url_2"><?php esc_html_e('URL 2', 'ldf-plugin'); ?></label></th>
+                            <td>
+                                <input type="url" class="regular-text code" style="width:100%;" id="ldf_import_url_2" name="ldf_import_url_2" placeholder="https://maps.google.com/..." />
+                                <p class="description"><?php esc_html_e('Optional secondary source used to complement missing fields.', 'ldf-plugin'); ?></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php submit_button(__('Create Professional', 'ldf-plugin')); ?>
+            </form>
+        </div>
+        <?php
+    }
     
     /**
      * Add meta box to professional edit screen
@@ -477,6 +563,33 @@ class LDF_Professional_Enricher {
         }
 
         update_post_meta($post_id, self::META_PIPELINE_STAGE, $stage);
+    }
+
+    /**
+     * Handle Professional import form submission
+     */
+    public function handle_import_professional_from_urls() {
+        if (!current_user_can('edit_posts')) {
+            wp_die(esc_html__('Permission denied', 'ldf-plugin'));
+        }
+
+        check_admin_referer('ldf_import_professional_from_urls', 'ldf_import_professional_nonce');
+
+        $urls = array_filter(array(
+            $this->sanitize_import_url($_POST['ldf_import_url_1'] ?? ''),
+            $this->sanitize_import_url($_POST['ldf_import_url_2'] ?? ''),
+        ));
+
+        if (empty($urls)) {
+            $this->store_import_result_and_redirect(array(
+                'success' => false,
+                'message' => __('Please provide at least one valid URL.', 'ldf-plugin'),
+                'details' => array(),
+            ));
+        }
+
+        $result = $this->import_professional_from_urls($urls);
+        $this->store_import_result_and_redirect($result);
     }
     
     /**
@@ -966,6 +1079,803 @@ class LDF_Professional_Enricher {
             'success' => !empty($updated),
             'message' => !empty($message) ? $message : 'No updates needed'
         );
+    }
+
+    /**
+     * Import a professional from one or two source URLs
+     */
+    private function import_professional_from_urls($urls) {
+        $pages = array();
+        $details = array();
+
+        foreach ($urls as $url) {
+            $page = $this->fetch_scrape_source($url);
+            if (!$page['success']) {
+                return array(
+                    'success' => false,
+                    'message' => sprintf(__('Unable to fetch %s', 'ldf-plugin'), $url),
+                    'details' => array($page['message']),
+                );
+            }
+
+            $details[] = sprintf(__('Fetched source: %s', 'ldf-plugin'), $url);
+            $pages[] = $page;
+        }
+
+        $data = $this->merge_scraped_data($pages);
+
+        if (empty($data['title'])) {
+            return array(
+                'success' => false,
+                'message' => __('Could not determine a business title from the provided URL(s).', 'ldf-plugin'),
+                'details' => $details,
+            );
+        }
+
+        $duplicate_id = $this->find_existing_professional($data);
+        if ($duplicate_id) {
+            return array(
+                'success' => false,
+                'message' => __('A Professional with the same website, email, phone, or title already exists.', 'ldf-plugin'),
+                'details' => array_merge($details, array(sprintf(__('Existing Professional ID: %d', 'ldf-plugin'), $duplicate_id))),
+                'edit_link' => get_edit_post_link($duplicate_id, 'raw'),
+            );
+        }
+
+        $post_id = wp_insert_post(array(
+            'post_type' => 'professional',
+            'post_status' => 'draft',
+            'post_title' => sanitize_text_field($data['title']),
+            'post_content' => wp_kses_post($data['description'] ?? ''),
+        ), true);
+
+        if (is_wp_error($post_id)) {
+            return array(
+                'success' => false,
+                'message' => __('Failed to create the Professional post.', 'ldf-plugin'),
+                'details' => array($post_id->get_error_message()),
+            );
+        }
+
+        update_post_meta($post_id, self::META_PIPELINE_STAGE, 'New');
+
+        $saved_fields = $this->save_imported_professional_data($post_id, $data);
+        $details = array_merge($details, $saved_fields);
+
+        $enrichment = $this->enrich_professional($post_id);
+        if (!empty($enrichment['message'])) {
+            $details[] = sprintf(__('Post-creation enrichment: %s', 'ldf-plugin'), $enrichment['message']);
+        }
+
+        return array(
+            'success' => true,
+            'message' => __('Professional imported successfully.', 'ldf-plugin'),
+            'details' => $details,
+            'edit_link' => get_edit_post_link($post_id, 'raw'),
+        );
+    }
+
+    private function sanitize_import_url($url) {
+        $url = trim((string) wp_unslash($url));
+        if (empty($url)) {
+            return '';
+        }
+
+        $url = esc_url_raw($url);
+        if (empty($url) || !wp_http_validate_url($url)) {
+            return '';
+        }
+
+        return $url;
+    }
+
+    private function fetch_scrape_source($url) {
+        $response = wp_remote_get($url, array(
+            'timeout' => 20,
+            'redirection' => 5,
+            'user-agent' => 'Mozilla/5.0 (compatible; LDF Professional Importer/1.0; +' . home_url('/') . ')',
+        ));
+
+        if (is_wp_error($response)) {
+            return array('success' => false, 'message' => $response->get_error_message());
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        if ($code < 200 || $code >= 300) {
+            return array('success' => false, 'message' => sprintf('HTTP %d', $code));
+        }
+
+        $html = wp_remote_retrieve_body($response);
+        if (empty($html)) {
+            return array('success' => false, 'message' => __('The source page was empty.', 'ldf-plugin'));
+        }
+
+        return array(
+            'success' => true,
+            'url' => $url,
+            'html' => $html,
+            'data' => $this->extract_scraped_data($html, $url),
+        );
+    }
+
+    private function extract_scraped_data($html, $url) {
+        $data = array(
+            'source_url' => $url,
+            'website' => $url,
+        );
+
+        $title = $this->extract_first_match('/<title[^>]*>(.*?)<\/title>/is', $html);
+        if ($title) {
+            $data['title'] = wp_strip_all_tags(html_entity_decode($title, ENT_QUOTES | ENT_HTML5));
+        }
+
+        $description = $this->extract_meta_content($html, array('description', 'og:description', 'twitter:description'));
+        if ($description) {
+            $data['description'] = $description;
+        }
+
+        $og_title = $this->extract_meta_content($html, array('og:title', 'twitter:title'));
+        if (!empty($og_title)) {
+            $data['title'] = $og_title;
+        }
+
+        $emails = array_unique(array_map('sanitize_email', $this->extract_all_matches('/[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}/i', $html)));
+        $emails = array_values(array_filter($emails, 'is_email'));
+        if (!empty($emails)) {
+            $data['email'] = $emails[0];
+        }
+
+        $phone = $this->extract_phone_number($html);
+        if ($phone) {
+            $data['phone'] = $phone;
+        }
+
+        $json_ld = $this->extract_json_ld_data($html);
+        $data = array_merge($data, array_filter($json_ld, function($value) {
+            return $value !== null && $value !== '' && $value !== array();
+        }));
+
+        $address = $this->extract_address_text($html);
+        if ($address && empty($data['address'])) {
+            $data['address'] = $address;
+        }
+
+        if (empty($data['city']) && !empty($data['address'])) {
+            $data['city'] = $this->extract_city_from_address($data['address']);
+        }
+
+        if (empty($data['logo'])) {
+            $logo = $this->extract_meta_content($html, array('og:image', 'twitter:image'));
+            if ($logo) {
+                $data['logo'] = $this->normalize_asset_url($logo, $url);
+            }
+        }
+
+        $gallery = $this->extract_image_candidates($html, $url);
+        if (!empty($gallery)) {
+            $data['image_gallery'] = $gallery;
+        }
+
+        $place_id = $this->extract_google_place_id($html . ' ' . $url);
+        if ($place_id) {
+            $data['place_id'] = $place_id;
+        }
+
+        $ratings = $this->extract_ratings($html, $json_ld);
+        $data = array_merge($data, $ratings);
+
+        $owner = $this->extract_labeled_value($html, array('owner', 'propriétaire', 'proprietaire', 'founder'));
+        if ($owner) {
+            $data['proprietaire'] = $owner;
+        }
+
+        $awards = $this->extract_labeled_value($html, array('awards', 'recognitions', 'awards and recognitions'));
+        if ($awards) {
+            $data['awards_and_recognitions'] = $awards;
+        }
+
+        $certifications = $this->extract_labeled_value($html, array('certifications', 'certification', 'licensed', 'licences'));
+        if ($certifications) {
+            $data['certifications'] = $certifications;
+        }
+
+        $service_areas = $this->extract_labeled_value($html, array('service areas', 'areas served', 'zones desservies'));
+        if ($service_areas) {
+            $data['service_areas'] = $service_areas;
+        }
+
+        $years = $this->extract_years_in_business($html);
+        if ($years) {
+            $data['years_in_business'] = $years;
+        }
+
+        if (!empty($data['title'])) {
+            $data['title'] = trim(preg_replace('/\s*[\|\-–—].*$/u', '', $data['title']));
+        }
+
+        if (!empty($data['description'])) {
+            $data['description'] = trim(wp_trim_words(wp_strip_all_tags($data['description']), 120, '...'));
+        }
+
+        return $data;
+    }
+
+    private function merge_scraped_data($pages) {
+        $merged = array();
+
+        foreach ($pages as $page) {
+            foreach ($page['data'] as $key => $value) {
+                if ($value === '' || $value === null || $value === array()) {
+                    continue;
+                }
+
+                if ($key === 'image_gallery') {
+                    if (empty($merged[$key])) {
+                        $merged[$key] = array();
+                    }
+                    $merged[$key] = array_values(array_unique(array_merge($merged[$key], (array) $value)));
+                    continue;
+                }
+
+                if (empty($merged[$key])) {
+                    $merged[$key] = $value;
+                }
+            }
+        }
+
+        return $merged;
+    }
+
+    private function find_existing_professional($data) {
+        $normalized_website = $this->normalize_website_for_matching($data['website'] ?? '');
+        $normalized_email = $this->normalize_email_for_matching($data['email'] ?? '');
+        $normalized_phone = $this->normalize_phone_for_matching($data['phone'] ?? '');
+        $normalized_title = $this->normalize_text_for_matching($data['title'] ?? '');
+        $normalized_city = $this->normalize_text_for_matching($data['city'] ?? '');
+
+        $normalized_checks = array(
+            self::META_NORMALIZED_WEBSITE => $normalized_website,
+            self::META_NORMALIZED_EMAIL => $normalized_email,
+            self::META_NORMALIZED_PHONE => $normalized_phone,
+        );
+
+        foreach ($normalized_checks as $meta_key => $value) {
+            if (empty($value)) {
+                continue;
+            }
+
+            $query = new WP_Query(array(
+                'post_type' => 'professional',
+                'post_status' => array('publish', 'draft', 'pending', 'private'),
+                'fields' => 'ids',
+                'posts_per_page' => 1,
+                'meta_query' => array(
+                    array(
+                        'key' => $meta_key,
+                        'value' => $value,
+                    ),
+                ),
+            ));
+
+            if (!empty($query->posts[0])) {
+                return (int) $query->posts[0];
+            }
+        }
+
+        foreach (array(
+            'website' => $data['website'] ?? '',
+            'email' => $data['email'] ?? '',
+            'phone' => $data['phone'] ?? '',
+        ) as $field => $value) {
+            if (empty($value)) {
+                continue;
+            }
+
+            $query = new WP_Query(array(
+                'post_type' => 'professional',
+                'post_status' => array('publish', 'draft', 'pending', 'private'),
+                'fields' => 'ids',
+                'posts_per_page' => 1,
+                'meta_query' => array(
+                    array(
+                        'key' => $field,
+                        'value' => $value,
+                    ),
+                ),
+            ));
+
+            if (!empty($query->posts[0])) {
+                return (int) $query->posts[0];
+            }
+        }
+
+        if (!empty($normalized_title)) {
+            $query = new WP_Query(array(
+                'post_type' => 'professional',
+                'post_status' => array('publish', 'draft', 'pending', 'private'),
+                'fields' => 'ids',
+                'posts_per_page' => 5,
+                'meta_query' => array(
+                    array(
+                        'key' => self::META_NORMALIZED_TITLE,
+                        'value' => $normalized_title,
+                    ),
+                ),
+            ));
+
+            if (!empty($query->posts)) {
+                if (count($query->posts) === 1 || empty($normalized_city)) {
+                    return (int) $query->posts[0];
+                }
+
+                foreach ($query->posts as $post_id) {
+                    $existing_city = $this->normalize_text_for_matching((string) get_post_meta($post_id, self::ACF_CITY, true));
+                    if (!empty($existing_city) && $existing_city === $normalized_city) {
+                        return (int) $post_id;
+                    }
+                }
+            }
+        }
+
+        if (!empty($data['title'])) {
+            $existing = get_page_by_title($data['title'], OBJECT, 'professional');
+            if ($existing) {
+                return (int) $existing->ID;
+            }
+        }
+
+        return 0;
+    }
+
+    private function save_imported_professional_data($post_id, $data) {
+        $details = array();
+
+        $field_map = array(
+            self::ACF_WEBSITE => $data['website'] ?? '',
+            self::ACF_EMAIL => $data['email'] ?? '',
+            self::ACF_PHONE => $data['phone'] ?? '',
+            self::ACF_ADDRESS => $data['address'] ?? '',
+            self::ACF_CITY => $data['city'] ?? '',
+            self::ACF_PLACE_ID => $data['place_id'] ?? '',
+            self::ACF_OWNER_NAME => $data['proprietaire'] ?? '',
+            self::ACF_AWARDS => $data['awards_and_recognitions'] ?? '',
+            self::ACF_CERTIFICATIONS => $data['certifications'] ?? '',
+            self::ACF_SERVICE_AREAS => $data['service_areas'] ?? '',
+            self::ACF_YEARS_IN_BUSINESS => $data['years_in_business'] ?? '',
+            self::ACF_QUALITY_AVG => $data['average_rating'] ?? '',
+            self::ACF_TIMELINESS_AVG => $data['timeliness_avg'] ?? '',
+            self::ACF_PROFESSIONALISM_AVG => $data['professionalism_avg'] ?? '',
+            self::ACF_VALUE_AVG => $data['value_for_money_avg'] ?? '',
+        );
+
+        foreach ($field_map as $field_key => $value) {
+            if ($value === '' || $value === null) {
+                continue;
+            }
+            $this->update_professional_field($field_key, $value, $post_id);
+            $details[] = sprintf(__('Saved field: %s', 'ldf-plugin'), $field_key);
+        }
+
+        if (!empty($data['logo'])) {
+            $logo_id = $this->upload_external_image($data['logo'], $post_id, 'logo');
+            if ($logo_id) {
+                $this->update_professional_field(self::ACF_LOGO, $logo_id, $post_id);
+                if (!has_post_thumbnail($post_id)) {
+                    set_post_thumbnail($post_id, $logo_id);
+                }
+                $details[] = __('Imported logo image', 'ldf-plugin');
+            }
+        }
+
+        if (!empty($data['image_gallery'])) {
+            $gallery_ids = array();
+            foreach (array_slice((array) $data['image_gallery'], 0, 5) as $image_url) {
+                $image_id = $this->upload_external_image($image_url, $post_id, 'gallery');
+                if ($image_id) {
+                    $gallery_ids[] = $image_id;
+                }
+            }
+
+            if (!empty($gallery_ids)) {
+                $this->update_professional_field(self::ACF_PHOTOS, $gallery_ids, $post_id);
+                if (!has_post_thumbnail($post_id)) {
+                    set_post_thumbnail($post_id, $gallery_ids[0]);
+                }
+                $details[] = sprintf(__('Imported %d gallery image(s)', 'ldf-plugin'), count($gallery_ids));
+            }
+        }
+
+        $this->store_normalized_dedup_meta($post_id, $data);
+
+        return $details;
+    }
+
+    private function store_normalized_dedup_meta($post_id, $data) {
+        $normalized_map = array(
+            self::META_NORMALIZED_WEBSITE => $this->normalize_website_for_matching($data['website'] ?? ''),
+            self::META_NORMALIZED_EMAIL => $this->normalize_email_for_matching($data['email'] ?? ''),
+            self::META_NORMALIZED_PHONE => $this->normalize_phone_for_matching($data['phone'] ?? ''),
+            self::META_NORMALIZED_TITLE => $this->normalize_text_for_matching($data['title'] ?? get_the_title($post_id)),
+        );
+
+        foreach ($normalized_map as $meta_key => $value) {
+            if ($value === '') {
+                delete_post_meta($post_id, $meta_key);
+                continue;
+            }
+
+            update_post_meta($post_id, $meta_key, $value);
+        }
+    }
+
+    private function update_professional_field($field_key, $value, $post_id) {
+        if (function_exists('update_field')) {
+            update_field($field_key, $value, $post_id);
+        }
+
+        update_post_meta($post_id, $field_key, $value);
+    }
+
+    private function upload_external_image($image_url, $post_id, $context = 'import') {
+        $image_url = esc_url_raw($image_url);
+        if (empty($image_url) || !wp_http_validate_url($image_url)) {
+            return false;
+        }
+
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+        $tmp = download_url($image_url, 30);
+        if (is_wp_error($tmp)) {
+            return false;
+        }
+
+        $filename = wp_basename(parse_url($image_url, PHP_URL_PATH));
+        if (!$filename) {
+            $filename = $context . '-' . md5($image_url) . '.jpg';
+        }
+
+        $file_array = array(
+            'name' => sanitize_file_name($filename),
+            'tmp_name' => $tmp,
+        );
+
+        $attachment_id = media_handle_sideload($file_array, $post_id);
+        if (is_wp_error($attachment_id)) {
+            @unlink($tmp);
+            return false;
+        }
+
+        return $attachment_id;
+    }
+
+    private function extract_meta_content($html, $names) {
+        foreach ((array) $names as $name) {
+            $pattern = '/<meta[^>]+(?:name|property)=["\']' . preg_quote($name, '/') . '["\'][^>]+content=["\']([^"\']+)["\']/i';
+            $match = $this->extract_first_match($pattern, $html);
+            if ($match) {
+                return trim(html_entity_decode($match, ENT_QUOTES | ENT_HTML5));
+            }
+        }
+
+        return '';
+    }
+
+    private function extract_json_ld_data($html) {
+        $matches = array();
+        preg_match_all('/<script[^>]+type=["\']application\/ld\+json["\'][^>]*>(.*?)<\/script>/is', $html, $matches);
+
+        $data = array();
+        foreach ($matches[1] as $json) {
+            $decoded = json_decode(trim($json), true);
+            if (json_last_error() !== JSON_ERROR_NONE || empty($decoded)) {
+                continue;
+            }
+
+            foreach ($this->flatten_json_ld_nodes($decoded) as $node) {
+                if (empty($data['title']) && !empty($node['name'])) {
+                    $data['title'] = $node['name'];
+                }
+                if (empty($data['description']) && !empty($node['description'])) {
+                    $data['description'] = wp_strip_all_tags($node['description']);
+                }
+                if (empty($data['website']) && !empty($node['url'])) {
+                    $data['website'] = esc_url_raw($node['url']);
+                }
+                if (empty($data['email']) && !empty($node['email'])) {
+                    $data['email'] = sanitize_email(str_replace('mailto:', '', $node['email']));
+                }
+                if (empty($data['phone']) && !empty($node['telephone'])) {
+                    $data['phone'] = $this->sanitize_phone($node['telephone']);
+                }
+                if (empty($data['logo']) && !empty($node['logo'])) {
+                    $data['logo'] = is_array($node['logo']) ? ($node['logo']['url'] ?? '') : $node['logo'];
+                }
+                if (empty($data['address']) && !empty($node['address'])) {
+                    $data['address'] = $this->stringify_address($node['address']);
+                    if (is_array($node['address']) && !empty($node['address']['addressLocality'])) {
+                        $data['city'] = $node['address']['addressLocality'];
+                    }
+                }
+                if (empty($data['average_rating']) && !empty($node['aggregateRating']['ratingValue'])) {
+                    $rating = (float) $node['aggregateRating']['ratingValue'];
+                    $data['average_rating'] = round($rating, 1);
+                    $data['timeliness_avg'] = round($rating, 1);
+                    $data['professionalism_avg'] = round($rating, 1);
+                    $data['value_for_money_avg'] = round($rating, 1);
+                }
+                if (empty($data['service_areas']) && !empty($node['areaServed'])) {
+                    $data['service_areas'] = $this->stringify_list($node['areaServed']);
+                }
+                if (empty($data['awards_and_recognitions']) && !empty($node['award'])) {
+                    $data['awards_and_recognitions'] = $this->stringify_list($node['award']);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    private function flatten_json_ld_nodes($decoded) {
+        if (isset($decoded['@graph']) && is_array($decoded['@graph'])) {
+            return $decoded['@graph'];
+        }
+
+        if (isset($decoded[0]) && is_array($decoded[0])) {
+            return $decoded;
+        }
+
+        return array($decoded);
+    }
+
+    private function stringify_address($address) {
+        if (is_string($address)) {
+            return trim($address);
+        }
+        if (!is_array($address)) {
+            return '';
+        }
+
+        $parts = array_filter(array(
+            $address['streetAddress'] ?? '',
+            $address['addressLocality'] ?? '',
+            $address['addressRegion'] ?? '',
+            $address['postalCode'] ?? '',
+            $address['addressCountry'] ?? '',
+        ));
+
+        return implode(', ', $parts);
+    }
+
+    private function stringify_list($value) {
+        if (is_string($value)) {
+            return trim($value);
+        }
+        if (!is_array($value)) {
+            return '';
+        }
+
+        $items = array();
+        foreach ($value as $item) {
+            if (is_string($item)) {
+                $items[] = trim($item);
+            } elseif (is_array($item)) {
+                $items[] = trim((string) ($item['name'] ?? $item['@id'] ?? ''));
+            }
+        }
+
+        return implode(', ', array_filter($items));
+    }
+
+    private function extract_phone_number($html) {
+        $phone = $this->extract_first_match('/(?:tel:|phone[^\d]{0,15})(\+?[0-9\s\-().]{7,})/i', $html);
+        return $phone ? $this->sanitize_phone($phone) : '';
+    }
+
+    private function sanitize_phone($phone) {
+        $phone = preg_replace('/[^0-9+\-().\s]/', '', (string) $phone);
+        return trim(preg_replace('/\s+/', ' ', $phone));
+    }
+
+    private function normalize_phone_for_matching($phone) {
+        $phone = preg_replace('/\D+/', '', (string) $phone);
+
+        if (strlen($phone) === 11 && strpos($phone, '1') === 0) {
+            $phone = substr($phone, 1);
+        }
+
+        return $phone;
+    }
+
+    private function normalize_email_for_matching($email) {
+        return strtolower(trim((string) $email));
+    }
+
+    private function normalize_website_for_matching($url) {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return '';
+        }
+
+        $parts = wp_parse_url($url);
+        if (empty($parts['host']) && !empty($parts['path'])) {
+            $parts = wp_parse_url('https://' . ltrim($url, '/'));
+        }
+
+        if (empty($parts['host'])) {
+            return '';
+        }
+
+        $host = strtolower($parts['host']);
+        $host = preg_replace('/^www\./i', '', $host);
+        $path = isset($parts['path']) ? untrailingslashit(strtolower($parts['path'])) : '';
+
+        return $host . $path;
+    }
+
+    private function normalize_text_for_matching($text) {
+        $text = remove_accents(wp_strip_all_tags((string) $text));
+        $text = strtolower($text);
+        $text = preg_replace('/[^a-z0-9]+/', ' ', $text);
+        return trim(preg_replace('/\s+/', ' ', $text));
+    }
+
+    private function extract_address_text($html) {
+        $address = $this->extract_first_match('/<address[^>]*>(.*?)<\/address>/is', $html);
+        if ($address) {
+            return trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($address)));
+        }
+
+        $address = $this->extract_labeled_value($html, array('address', 'adresse'));
+        return $address ? trim($address) : '';
+    }
+
+    private function extract_city_from_address($address) {
+        $parts = array_map('trim', explode(',', (string) $address));
+        return !empty($parts[1]) ? $parts[1] : '';
+    }
+
+    private function extract_image_candidates($html, $base_url) {
+        $matches = array();
+        preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/i', $html, $matches);
+        $urls = array();
+        foreach ($matches[1] as $src) {
+            $normalized = $this->normalize_asset_url($src, $base_url);
+            if (!$normalized) {
+                continue;
+            }
+
+            if (preg_match('/logo|icon|avatar/i', $normalized)) {
+                continue;
+            }
+
+            $urls[] = $normalized;
+        }
+
+        return array_values(array_unique(array_slice($urls, 0, 5)));
+    }
+
+    private function normalize_asset_url($asset_url, $base_url) {
+        $asset_url = trim((string) $asset_url);
+        if (empty($asset_url) || strpos($asset_url, 'data:') === 0) {
+            return '';
+        }
+
+        if (preg_match('#^https?://#i', $asset_url)) {
+            return esc_url_raw($asset_url);
+        }
+
+        $base_parts = wp_parse_url($base_url);
+        if (empty($base_parts['scheme']) || empty($base_parts['host'])) {
+            return '';
+        }
+
+        if (strpos($asset_url, '//') === 0) {
+            return esc_url_raw($base_parts['scheme'] . ':' . $asset_url);
+        }
+
+        $root = $base_parts['scheme'] . '://' . $base_parts['host'];
+        if (!empty($base_parts['port'])) {
+            $root .= ':' . $base_parts['port'];
+        }
+
+        if (strpos($asset_url, '/') === 0) {
+            return esc_url_raw($root . $asset_url);
+        }
+
+        $path = !empty($base_parts['path']) ? dirname($base_parts['path']) : '';
+        if ($path === DIRECTORY_SEPARATOR || $path === '.') {
+            $path = '';
+        }
+
+        return esc_url_raw($root . trailingslashit($path) . ltrim($asset_url, '/'));
+    }
+
+    private function extract_google_place_id($text) {
+        $match = $this->extract_first_match('/ChI[A-Za-z0-9_\-]{10,}/', $text);
+        return $match ? trim($match) : '';
+    }
+
+    private function extract_ratings($html, $json_ld_data) {
+        $ratings = array();
+        if (!empty($json_ld_data['average_rating'])) {
+            $average = (float) $json_ld_data['average_rating'];
+            $ratings['average_rating'] = round($average, 1);
+            $ratings['timeliness_avg'] = round($average, 1);
+            $ratings['professionalism_avg'] = round($average, 1);
+            $ratings['value_for_money_avg'] = round($average, 1);
+            return $ratings;
+        }
+
+        $average = $this->extract_first_match('/(?:rating|rated|average rating)[^0-9]{0,10}([0-9](?:\.[0-9])?)/i', $html);
+        if ($average !== '') {
+            $average = round((float) $average, 1);
+            $ratings['average_rating'] = $average;
+            $ratings['timeliness_avg'] = $average;
+            $ratings['professionalism_avg'] = $average;
+            $ratings['value_for_money_avg'] = $average;
+        }
+
+        return $ratings;
+    }
+
+    private function extract_labeled_value($html, $labels) {
+        $text = wp_strip_all_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        foreach ((array) $labels as $label) {
+            $match = $this->extract_first_match('/' . preg_quote($label, '/') . '\s*[:\-]\s*(.{1,120})/iu', $text);
+            if ($match) {
+                $value = preg_split('/\s{2,}|(?:\.|\||;)/u', $match);
+                return trim((string) ($value[0] ?? $match));
+            }
+        }
+
+        return '';
+    }
+
+    private function extract_years_in_business($html) {
+        $text = wp_strip_all_tags($html);
+        $match = $this->extract_first_match('/(?:years in business|depuis|since)\D{0,20}(\d{1,2}|19\d{2}|20\d{2})/i', $text);
+        if ($match === '') {
+            return '';
+        }
+
+        $value = (int) $match;
+        if ($value > 1900) {
+            $current_year = (int) gmdate('Y');
+            return max(0, $current_year - $value);
+        }
+
+        return $value;
+    }
+
+    private function extract_first_match($pattern, $subject) {
+        if (preg_match($pattern, $subject, $matches)) {
+            return trim(html_entity_decode(wp_strip_all_tags($matches[1] ?? $matches[0]), ENT_QUOTES | ENT_HTML5));
+        }
+
+        return '';
+    }
+
+    private function extract_all_matches($pattern, $subject) {
+        if (preg_match_all($pattern, $subject, $matches)) {
+            return $matches[0];
+        }
+
+        return array();
+    }
+
+    private function get_import_result_transient_key() {
+        return self::IMPORT_RESULT_TRANSIENT_PREFIX . get_current_user_id();
+    }
+
+    private function store_import_result_and_redirect($result) {
+        set_transient($this->get_import_result_transient_key(), $result, MINUTE_IN_SECONDS * 5);
+        wp_safe_redirect(admin_url('edit.php?post_type=professional&page=ldf-professional-import'));
+        exit;
     }
 
     /**
